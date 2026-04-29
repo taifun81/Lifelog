@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LifeLog">
+<title>LifeLog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080808;
+  --bg2: #111111;
+  --bg3: #1a1a1a;
+  --bg4: #222222;
+  --line: rgba(255,255,255,0.06);
+  --line2: rgba(255,255,255,0.1);
+  --text: #f0f0f0;
+  --muted: #666;
+  --muted2: #444;
+  --accent: #c8a96e;
+  --accent2: #e8c98e;
+  --accent-dim: rgba(200,169,110,0.12);
+  --accent-glow: rgba(200,169,110,0.06);
+  --red: #e05555;
+  --green: #5ec47a;
+  --blue: #5b9cf6;
+  --r: 16px;
+  --r2: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; }
+
+/* APP SHELL */
+#app { height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+
+/* TOP BAR */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px 10px;
+  padding-top: max(14px, env(safe-area-inset-top, 14px));
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+  position: relative;
+}
+.topbar-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+.topbar-title span { color: var(--accent); }
+.topbar-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line2); background: var(--bg2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--muted); transition: .15s; }
+.topbar-btn:active { background: var(--bg3); }
+
+/* CONTENT */
+#content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+
+/* NAV */
+.nav {
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 10px 0;
+  padding-bottom: max(10px, env(safe-area-inset-bottom, 10px));
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 16px; border-radius: 12px; transition: .15s; }
+.nav-item .nav-icon { font-size: 20px; line-height: 1; }
+.nav-item .nav-label { font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.2px; }
+.nav-item.active .nav-label { color: var(--accent); }
+.nav-item.active .nav-icon { filter: none; }
+
+/* SCREENS */
+.screen { display: none; padding: 20px; min-height: 100%; }
+.screen.active { display: block; }
+
+/* HOME */
+.home-header { margin-bottom: 24px; }
+.home-date { font-size: 13px; color: var(--muted); font-weight: 400; margin-bottom: 4px; }
+.home-greeting { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+.home-greeting span { color: var(--accent); }
+
+/* TODAY CARD */
+.today-card {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.today-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.today-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+.today-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.today-stat { text-align: center; }
+.today-stat-val { font-size: 24px; font-weight: 700; color: var(--accent); font-family: 'DM Mono', monospace; line-height: 1; margin-bottom: 4px; }
+.today-stat-label { font-size: 11px; color: var(--muted); }
+
+/* ADD BUTTON */
+.add-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #1a1000;
+  border: none;
+  border-radius: var(--r);
+  padding: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  transition: .15s;
+  letter-spacing: -0.2px;
+}
+.add-btn:active { opacity: 0.85; transform: scale(0.98); }
+
+/* RECENT */
+.section-title { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 12px; }
+.log-item {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.log-item-icon { font-size: 24px; line-height: 1; flex-shrink: 0; }
+.log-item-info { flex: 1; min-width: 0; }
+.log-item-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.log-item-meta { font-size: 12px; color: var(--muted); }
+.log-item-right { text-align: right; flex-shrink: 0; }
+.log-item-vol { font-size: 14px; font-weight: 600; color: var(--accent); font-family: 'DM Mono', monospace; }
+.log-item-time { font-size: 11px; color: var(--muted2); margin-top: 2px; }
+.log-item-del { width: 28px; height: 28px; border-radius: 8px; border: none; background: rgba(224,85,85,0.1); color: var(--red); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.log-item-del:active { background: rgba(224,85,85,0.2); }
+
+.empty-state { text-align: center; padding: 40px 20px; }
+.empty-state-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+.empty-state-text { font-size: 15px; color: var(--muted); }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: flex-end;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  width: 100%; background: var(--bg2);
+  border-radius: 24px 24px 0 0;
+  border: 1px solid var(--line2);
+  border-bottom: none;
+  transform: translateY(100%);
+  transition: transform .3s cubic-bezier(.32,.72,0,1);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; background: var(--bg4); border-radius: 2px; margin: 14px auto 20px; }
+.modal-title { font-size: 20px; font-weight: 700; padding: 0 20px; margin-bottom: 20px; letter-spacing: -0.3px; }
+.modal-close { position: absolute; top: 16px; right: 20px; width: 30px; height: 30px; border-radius: 50%; background: var(--bg3); border: none; color: var(--muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+/* DRINK SELECTOR */
+.drink-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 20px 20px; }
+.drink-card {
+  background: var(--bg3); border: 1px solid var(--line); border-radius: var(--r2);
+  padding: 14px 8px; text-align: center; cursor: pointer; transition: .15s;
+}
+.drink-card:active { transform: scale(0.95); }
+.drink-card.selected { background: var(--accent-dim); border-color: var(--accent); }
+.drink-card-icon { font-size: 28px; margin-bottom: 6px; }
+.drink-card-name { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.2; }
+.drink-card-abv { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* VOLUME SELECTOR */
+.vol-section { padding: 0 20px 16px; }
+.vol-label { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+.vol-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.vol-btn {
+  background: var(--bg3); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 8px; text-align: center; cursor: pointer; transition: .15s;
+}
+.vol-btn:active { transform: scale(0.95); }
+.vol-btn.selected { background: var(--accent-dim); border-color: var(--accent); }
+.vol-btn-val { font-size: 15px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--accent); }
+.vol-btn-unit { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* CUSTOM VOL */
+.custom-vol { display: flex; gap: 8px; align-items: center; }
+.custom-vol input {
+  flex: 1; background: var(--bg3); border: 1px solid var(--line2); border-radius: 10px;
+  padding: 12px 14px; font-size: 16px; font-family: 'DM Mono', monospace;
+  color: var(--text); font-weight: 600; outline: none;
+}
+.custom-vol input:focus { border-color: var(--accent); }
+.vol-unit-toggle { display: flex; background: var(--bg3); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.vol-unit-btn { padding: 12px 14px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); transition: .15s; border: none; background: none; font-family: 'DM Sans', sans-serif; }
+.vol-unit-btn.active { background: var(--accent); color: #1a1000; }
+
+/* CONFIRM BTN */
+.confirm-btn {
+  margin: 0 20px; width: calc(100% - 40px);
+  background: var(--accent); color: #1a1000;
+  border: none; border-radius: var(--r); padding: 18px;
+  font-size: 16px; font-weight: 700; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: .15s;
+}
+.confirm-btn:disabled { opacity: 0.4; }
+.confirm-btn:not(:disabled):active { opacity: 0.85; transform: scale(0.98); }
+
+/* STATS SCREEN */
+.stats-tabs { display: flex; gap: 6px; margin-bottom: 20px; background: var(--bg2); border-radius: 12px; padding: 4px; }
+.stats-tab { flex: 1; padding: 8px; border-radius: 9px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); border: none; background: none; font-family: 'DM Sans', sans-serif; transition: .15s; }
+.stats-tab.active { background: var(--bg4); color: var(--text); }
+
+.stat-card { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; margin-bottom: 12px; }
+.stat-card-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+.stat-card-val { font-size: 32px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--accent); }
+.stat-card-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+/* BAR CHART */
+.bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 80px; margin-top: 12px; }
+.bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.bar { width: 100%; background: var(--accent-dim); border-radius: 4px 4px 0 0; border: 1px solid rgba(200,169,110,0.2); min-height: 3px; transition: height .3s; position: relative; }
+.bar.today { background: var(--accent); border-color: var(--accent); }
+.bar-label { font-size: 9px; color: var(--muted2); font-family: 'DM Mono', monospace; }
+
+/* DRINKS SCREEN */
+.drink-list-item {
+  background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r2);
+  padding: 14px 16px; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 12px;
+}
+.drink-list-icon { font-size: 28px; }
+.drink-list-info { flex: 1; }
+.drink-list-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.drink-list-meta { font-size: 12px; color: var(--muted); }
+.drink-list-del { width: 30px; height: 30px; border-radius: 8px; border: none; background: rgba(224,85,85,0.1); color: var(--red); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+.add-drink-btn {
+  width: 100%; background: transparent; border: 1px dashed var(--line2);
+  border-radius: var(--r2); padding: 16px; font-size: 14px; font-weight: 600;
+  color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: .15s; margin-top: 4px;
+}
+.add-drink-btn:active { background: var(--bg2); }
+
+/* SETTINGS */
+.settings-section { margin-bottom: 24px; }
+.settings-item {
+  background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r2);
+  padding: 16px; margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.settings-item-label { font-size: 15px; font-weight: 500; }
+.settings-item-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.settings-btn {
+  background: var(--bg3); border: 1px solid var(--line2); border-radius: 8px;
+  padding: 8px 14px; font-size: 13px; font-weight: 600; color: var(--accent);
+  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: .15s;
+}
+.settings-btn:active { opacity: 0.7; }
+.settings-btn.danger { color: var(--red); border-color: rgba(224,85,85,0.2); background: rgba(224,85,85,0.05); }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--bg3); border: 1px solid var(--line2); border-radius: 12px;
+  padding: 12px 20px; font-size: 14px; font-weight: 600; color: var(--text);
+  opacity: 0; transition: all .25s; z-index: 200; white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ADD DRINK MODAL INPUTS */
+.input-group { padding: 0 20px; margin-bottom: 16px; }
+.input-label { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.input-field {
+  width: 100%; background: var(--bg3); border: 1px solid var(--line2);
+  border-radius: 10px; padding: 14px; font-size: 16px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; outline: none;
+}
+.input-field:focus { border-color: var(--accent); }
+.emoji-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.emoji-opt { width: 44px; height: 44px; border-radius: 10px; background: var(--bg3); border: 1px solid var(--line); font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: .15s; }
+.emoji-opt.selected { background: var(--accent-dim); border-color: var(--accent); }
+.emoji-opt:active { transform: scale(0.9); }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-title">Life<span>Log</span></div>
+    <div style="display:flex;gap:8px">
+      <div class="topbar-btn" onclick="showScreen('settings')" title="Настройки">⚙️</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content">
+    <!-- HOME -->
+    <div id="screen-home" class="screen active">
+      <div class="home-header">
+        <div class="home-date" id="homeDate"></div>
+        <div class="home-greeting">Сегодня,<br><span id="homeGreeting"></span></div>
+      </div>
+
+      <div class="today-card">
+        <div class="today-label">Сегодня</div>
+        <div class="today-stats">
+          <div class="today-stat">
+            <div class="today-stat-val" id="todayDrinks">0</div>
+            <div class="today-stat-label">напитков</div>
+          </div>
+          <div class="today-stat">
+            <div class="today-stat-val" id="todayVol">0</div>
+            <div class="today-stat-label">мл всего</div>
+          </div>
+          <div class="today-stat">
+            <div class="today-stat-val" id="todayAlc">0.0</div>
+            <div class="today-stat-label">г алкоголя</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="add-btn" onclick="openAddModal()">
+        <span style="font-size:20px">＋</span> Добавить напиток
+      </button>
+
+      <div class="section-title">Последние записи</div>
+      <div id="recentList"></div>
+    </div>
+
+    <!-- STATS -->
+    <div id="screen-stats" class="screen">
+      <div style="margin-bottom:20px">
+        <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px">Статистика</div>
+        <div style="font-size:13px;color:var(--muted)">Твои паттерны потребления</div>
+      </div>
+      <div class="stats-tabs">
+        <button class="stats-tab active" onclick="setStatTab('week',this)">Неделя</button>
+        <button class="stats-tab" onclick="setStatTab('month',this)">Месяц</button>
+        <button class="stats-tab" onclick="setStatTab('all',this)">Всё время</button>
+      </div>
+      <div id="statsContent"></div>
+    </div>
+
+    <!-- DRINKS -->
+    <div id="screen-drinks" class="screen">
+      <div style="margin-bottom:20px">
+        <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px">База напитков</div>
+        <div style="font-size:13px;color:var(--muted)">Редактируй под себя</div>
+      </div>
+      <div id="drinksList"></div>
+      <button class="add-drink-btn" onclick="openAddDrinkModal()">＋ Добавить напиток</button>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="screen-settings" class="screen">
+      <div style="margin-bottom:20px">
+        <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px">Настройки</div>
+      </div>
+      <div class="settings-section">
+        <div class="section-title">Данные</div>
+        <div class="settings-item">
+          <div>
+            <div class="settings-item-label">Экспорт данных</div>
+            <div class="settings-item-sub">Сохранить резервную копию</div>
+          </div>
+          <button class="settings-btn" onclick="exportData()">⬇ JSON</button>
+        </div>
+        <div class="settings-item">
+          <div>
+            <div class="settings-item-label">Импорт данных</div>
+            <div class="settings-item-sub">Восстановить из копии</div>
+          </div>
+          <button class="settings-btn" onclick="importData()">⬆ JSON</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="section-title">Опасная зона</div>
+        <div class="settings-item">
+          <div>
+            <div class="settings-item-label">Очистить все записи</div>
+            <div class="settings-item-sub">Удалить историю, база напитков сохранится</div>
+          </div>
+          <button class="settings-btn danger" onclick="clearLogs()">Удалить</button>
+        </div>
+      </div>
+      <div style="text-align:center;padding:20px;color:var(--muted2);font-size:12px">
+        LifeLog v1.0 · Сделано с ❤️
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <div class="nav-item active" id="nav-home" onclick="showScreen('home')">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">Главная</div>
+    </div>
+    <div class="nav-item" id="nav-stats" onclick="showScreen('stats')">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">Статистика</div>
+    </div>
+    <div class="nav-item" id="nav-drinks" onclick="showScreen('drinks')">
+      <div class="nav-icon">🍶</div>
+      <div class="nav-label">Напитки</div>
+    </div>
+    <div class="nav-item" id="nav-settings" onclick="showScreen('settings')">
+      <div class="nav-icon">⚙️</div>
+      <div class="nav-label">Настройки</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD LOG MODAL -->
+<div class="modal-overlay" id="addModal" onclick="handleOverlayClick(event,'addModal')">
+  <div class="modal" style="position:relative">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+    <div class="modal-title">Добавить запись</div>
+
+    <div style="padding:0 20px 12px">
+      <div class="vol-label">Выбери напиток</div>
+    </div>
+    <div class="drink-grid" id="modalDrinkGrid"></div>
+
+    <div class="vol-section">
+      <div class="vol-label">Объём</div>
+      <div class="vol-grid" id="volPresets"></div>
+      <div class="custom-vol">
+        <input type="number" id="customVol" placeholder="Другой объём" min="1" max="9999" oninput="onCustomVolInput()">
+        <div class="vol-unit-toggle">
+          <button class="vol-unit-btn active" onclick="setUnit('мл',this)">мл</button>
+          <button class="vol-unit-btn" onclick="setUnit('сл',this)">сл</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="confirm-btn" id="confirmBtn" onclick="confirmLog()" disabled>Добавить запись</button>
+  </div>
+</div>
+
+<!-- ADD DRINK MODAL -->
+<div class="modal-overlay" id="addDrinkModal" onclick="handleOverlayClick(event,'addDrinkModal')">
+  <div class="modal" style="position:relative">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('addDrinkModal')">✕</button>
+    <div class="modal-title">Новый напиток</div>
+
+    <div class="input-group">
+      <div class="input-label">Название</div>
+      <input class="input-field" id="newDrinkName" type="text" placeholder="Например: Пиво IPA">
+    </div>
+    <div class="input-group">
+      <div class="input-label">Крепость (% алкоголя)</div>
+      <input class="input-field" id="newDrinkAbv" type="number" step="0.1" min="0" max="100" placeholder="0.0">
+    </div>
+    <div class="input-group">
+      <div class="input-label">Иконка</div>
+      <div class="emoji-grid" id="emojiGrid"></div>
+    </div>
+
+    <button class="confirm-btn" onclick="confirmAddDrink()" style="margin-top:8px">Добавить</button>
+    <div style="height:8px"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)">
+
+<script>
+// ====== DATA ======
+const DEFAULT_DRINKS = [
+  { id: 1, name: 'Пиво', icon: '🍺', abv: 5.0 },
+  { id: 2, name: 'Светлое', icon: '🍻', abv: 4.5 },
+  { id: 3, name: 'Вино красное', icon: '🍷', abv: 13.0 },
+  { id: 4, name: 'Вино белое', icon: '🥂', abv: 11.5 },
+  { id: 5, name: 'Водка', icon: '🥃', abv: 40.0 },
+  { id: 6, name: 'Виски', icon: '🥃', abv: 40.0 },
+  { id: 7, name: 'Джин', icon: '🍸', abv: 40.0 },
+  { id: 8, name: 'Ром', icon: '🍹', abv: 40.0 },
+  { id: 9, name: 'Шампанское', icon: '🍾', abv: 12.0 },
+  { id: 10, name: 'Лонгдринк', icon: '🧉', abv: 6.0 },
+  { id: 11, name: 'Коктейль', icon: '🍹', abv: 10.0 },
+  { id: 12, name: 'Пиво безалк.', icon: '🫗', abv: 0.5 },
+];
+
+const VOL_PRESETS_ML = [100, 200, 300, 330, 500, 1000];
+const EMOJIS = ['🍺','🍻','🥂','🍷','🥃','🍸','🍹','🍾','🧉','🫗','🧊','🍵'];
+
+let state = {
+  drinks: [],
+  logs: [],
+  unit: 'мл',
+  selectedDrink: null,
+  selectedVol: null,
+  newDrinkEmoji: '🍺',
+  statTab: 'week'
+};
+
+function load() {
+  const d = localStorage.getItem('ll_drinks');
+  const l = localStorage.getItem('ll_logs');
+  state.drinks = d ? JSON.parse(d) : JSON.parse(JSON.stringify(DEFAULT_DRINKS));
+  state.logs = l ? JSON.parse(l) : [];
+}
+function save() {
+  localStorage.setItem('ll_drinks', JSON.stringify(state.drinks));
+  localStorage.setItem('ll_logs', JSON.stringify(state.logs));
+}
+
+// ====== SCREEN ======
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.getElementById('nav-' + name)?.classList.add('active');
+  if (name === 'home') renderHome();
+  if (name === 'stats') renderStats();
+  if (name === 'drinks') renderDrinks();
+  document.getElementById('content').scrollTop = 0;
+}
+
+// ====== HOME ======
+function renderHome() {
+  const now = new Date();
+  const days = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+  const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  document.getElementById('homeDate').textContent = days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()];
+
+  const h = now.getHours();
+  let greeting = h < 6 ? 'Доброй ночи 🌙' : h < 12 ? 'Доброе утро ☀️' : h < 18 ? 'Добрый день 👋' : 'Добрый вечер 🌆';
+  document.getElementById('homeGreeting').textContent = greeting;
+
+  const todayStr = toDateStr(now);
+  const todayLogs = state.logs.filter(l => l.date === todayStr);
+  const totalVol = todayLogs.reduce((a, l) => a + l.vol, 0);
+  const totalAlc = todayLogs.reduce((a, l) => {
+    const d = state.drinks.find(d => d.id === l.drinkId);
+    return a + (d ? l.vol * d.abv / 100 * 0.789 : 0);
+  }, 0);
+
+  document.getElementById('todayDrinks').textContent = todayLogs.length;
+  document.getElementById('todayVol').textContent = totalVol;
+  document.getElementById('todayAlc').textContent = totalAlc.toFixed(1);
+
+  // Recent
+  const list = document.getElementById('recentList');
+  const recent = [...state.logs].sort((a,b) => b.ts - a.ts).slice(0, 10);
+  if (!recent.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🫗</div><div class="empty-state-text">Записей пока нет.<br>Нажми «Добавить напиток»!</div></div>';
+    return;
+  }
+  list.innerHTML = recent.map(log => {
+    const drink = state.drinks.find(d => d.id === log.drinkId);
+    if (!drink) return '';
+    const t = new Date(log.ts);
+    const timeStr = t.toLocaleTimeString('ru', {hour:'2-digit',minute:'2-digit'});
+    const dateStr = log.date === todayStr ? 'Сегодня' : log.date;
+    const volStr = log.unit === 'сл' ? log.vol + ' сл' : log.vol + ' мл';
+    return `<div class="log-item">
+      <div class="log-item-icon">${drink.icon}</div>
+      <div class="log-item-info">
+        <div class="log-item-name">${drink.name}</div>
+        <div class="log-item-meta">${drink.abv}% алк · ${dateStr}</div>
+      </div>
+      <div class="log-item-right">
+        <div class="log-item-vol">${volStr}</div>
+        <div class="log-item-time">${timeStr}</div>
+      </div>
+      <button class="log-item-del" onclick="deleteLog(${log.ts})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function deleteLog(ts) {
+  state.logs = state.logs.filter(l => l.ts !== ts);
+  save(); renderHome();
+  showToast('Запись удалена');
+}
+
+// ====== MODAL ======
+function openAddModal() {
+  state.selectedDrink = null;
+  state.selectedVol = null;
+  document.getElementById('customVol').value = '';
+  document.getElementById('confirmBtn').disabled = true;
+
+  // Drink grid
+  const grid = document.getElementById('modalDrinkGrid');
+  grid.innerHTML = state.drinks.map(d =>
+    `<div class="drink-card" onclick="selectDrink(${d.id},this)">
+      <div class="drink-card-icon">${d.icon}</div>
+      <div class="drink-card-name">${d.name}</div>
+      <div class="drink-card-abv">${d.abv}%</div>
+    </div>`
+  ).join('');
+
+  // Vol presets
+  const vp = document.getElementById('volPresets');
+  vp.innerHTML = VOL_PRESETS_ML.map(v =>
+    `<div class="vol-btn" onclick="selectVol(${v},this)">
+      <div class="vol-btn-val">${v}</div>
+      <div class="vol-btn-unit">мл</div>
+    </div>`
+  ).join('');
+
+  openModal('addModal');
+}
+
+function selectDrink(id, el) {
+  state.selectedDrink = id;
+  document.querySelectorAll('#modalDrinkGrid .drink-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  checkConfirm();
+}
+
+function selectVol(vol, el) {
+  state.selectedVol = vol;
+  document.getElementById('customVol').value = '';
+  document.querySelectorAll('.vol-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  checkConfirm();
+}
+
+function onCustomVolInput() {
+  const v = parseInt(document.getElementById('customVol').value);
+  if (v > 0) {
+    state.selectedVol = v;
+    document.querySelectorAll('.vol-btn').forEach(b => b.classList.remove('selected'));
+  } else {
+    state.selectedVol = null;
+  }
+  checkConfirm();
+}
+
+function setUnit(u, el) {
+  state.unit = u;
+  document.querySelectorAll('.vol-unit-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function checkConfirm() {
+  document.getElementById('confirmBtn').disabled = !(state.selectedDrink && state.selectedVol);
+}
+
+function confirmLog() {
+  if (!state.selectedDrink || !state.selectedVol) return;
+  const now = new Date();
+  state.logs.push({
+    ts: now.getTime(),
+    date: toDateStr(now),
+    drinkId: state.selectedDrink,
+    vol: state.selectedVol,
+    unit: state.unit
+  });
+  save();
+  closeModal('addModal');
+  renderHome();
+  showToast('✓ Запись добавлена');
+}
+
+// ====== ADD DRINK MODAL ======
+function openAddDrinkModal() {
+  state.newDrinkEmoji = '🍺';
+  document.getElementById('newDrinkName').value = '';
+  document.getElementById('newDrinkAbv').value = '';
+  const eg = document.getElementById('emojiGrid');
+  eg.innerHTML = EMOJIS.map(e =>
+    `<div class="emoji-opt ${e === state.newDrinkEmoji ? 'selected' : ''}" onclick="selectEmoji('${e}',this)">${e}</div>`
+  ).join('');
+  openModal('addDrinkModal');
+}
+
+function selectEmoji(e, el) {
+  state.newDrinkEmoji = e;
+  document.querySelectorAll('.emoji-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function confirmAddDrink() {
+  const name = document.getElementById('newDrinkName').value.trim();
+  const abv = parseFloat(document.getElementById('newDrinkAbv').value);
+  if (!name || isNaN(abv)) { showToast('Заполни название и крепость'); return; }
+  const newId = Date.now();
+  state.drinks.push({ id: newId, name, icon: state.newDrinkEmoji, abv });
+  save();
+  closeModal('addDrinkModal');
+  renderDrinks();
+  showToast('✓ Напиток добавлен');
+}
+
+// ====== DRINKS ======
+function renderDrinks() {
+  const list = document.getElementById('drinksList');
+  list.innerHTML = state.drinks.map(d =>
+    `<div class="drink-list-item">
+      <div class="drink-list-icon">${d.icon}</div>
+      <div class="drink-list-info">
+        <div class="drink-list-name">${d.name}</div>
+        <div class="drink-list-meta">${d.abv}% алкоголя</div>
+      </div>
+      <button class="drink-list-del" onclick="deleteDrink(${d.id})">✕</button>
+    </div>`
+  ).join('');
+}
+
+function deleteDrink(id) {
+  if (state.logs.some(l => l.drinkId === id)) {
+    showToast('⚠ Напиток есть в записях');
+    return;
+  }
+  state.drinks = state.drinks.filter(d => d.id !== id);
+  save(); renderDrinks();
+  showToast('Напиток удалён');
+}
+
+// ====== STATS ======
+function setStatTab(tab, el) {
+  state.statTab = tab;
+  document.querySelectorAll('.stats-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderStats();
+}
+
+function renderStats() {
+  const now = new Date();
+  let logs = state.logs;
+  if (state.statTab === 'week') {
+    const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7);
+    logs = logs.filter(l => new Date(l.ts) >= weekAgo);
+  } else if (state.statTab === 'month') {
+    const monthAgo = new Date(now); monthAgo.setDate(monthAgo.getDate() - 30);
+    logs = logs.filter(l => new Date(l.ts) >= monthAgo);
+  }
+
+  const totalVol = logs.reduce((a, l) => a + l.vol, 0);
+  const totalAlc = logs.reduce((a, l) => {
+    const d = state.drinks.find(d => d.id === l.drinkId);
+    return a + (d ? l.vol * d.abv / 100 * 0.789 : 0);
+  }, 0);
+
+  // Days with data
+  const dayMap = {};
+  logs.forEach(l => { dayMap[l.date] = (dayMap[l.date] || 0) + l.vol; });
+  const daysWithDrink = Object.keys(dayMap).length;
+
+  // Bar chart — last 7 days
+  const days7 = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    const ds = toDateStr(d);
+    days7.push({ label: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()], vol: dayMap[ds] || 0, isToday: i === 0 });
+  }
+  const maxVol = Math.max(...days7.map(d => d.vol), 1);
+
+  // Top drinks
+  const drinkCount = {};
+  logs.forEach(l => { drinkCount[l.drinkId] = (drinkCount[l.drinkId] || 0) + 1; });
+  const topDrinks = Object.entries(drinkCount).sort((a,b) => b[1]-a[1]).slice(0,3);
+
+  const el = document.getElementById('statsContent');
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="stat-card">
+        <div class="stat-card-title">Всего мл</div>
+        <div class="stat-card-val">${totalVol}</div>
+        <div class="stat-card-sub">за период</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-title">Алкоголь (г)</div>
+        <div class="stat-card-val">${totalAlc.toFixed(0)}</div>
+        <div class="stat-card-sub">чистого</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="stat-card">
+        <div class="stat-card-title">Дней с выпивкой</div>
+        <div class="stat-card-val">${daysWithDrink}</div>
+        <div class="stat-card-sub">дней</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-title">Записей</div>
+        <div class="stat-card-val">${logs.length}</div>
+        <div class="stat-card-sub">всего</div>
+      </div>
+    </div>
+    <div class="stat-card" style="margin-bottom:12px">
+      <div class="stat-card-title">Активность (7 дней, мл)</div>
+      <div class="bar-chart">
+        ${days7.map(d => `
+          <div class="bar-wrap">
+            <div class="bar ${d.isToday ? 'today' : ''}" style="height:${Math.max(3, (d.vol/maxVol)*70)}px"></div>
+            <div class="bar-label">${d.label}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    ${topDrinks.length ? `
+    <div class="stat-card">
+      <div class="stat-card-title">Топ напитки</div>
+      ${topDrinks.map(([id, cnt]) => {
+        const d = state.drinks.find(d => d.id == id);
+        return d ? `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)">
+          <span style="font-size:20px">${d.icon}</span>
+          <span style="flex:1;font-size:14px;font-weight:600">${d.name}</span>
+          <span style="font-size:13px;color:var(--accent);font-family:'DM Mono',monospace">${cnt}×</span>
+        </div>` : '';
+      }).join('')}
+    </div>` : ''}
+  `;
+}
+
+// ====== SETTINGS ======
+function exportData() {
+  const data = { drinks: state.drinks, logs: state.logs, exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'lifelog_backup_' + toDateStr(new Date()) + '.json';
+  a.click();
+  showToast('✓ Данные экспортированы');
+}
+
+function importData() { document.getElementById('importFile').click(); }
+
+function handleImport(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.drinks) state.drinks = data.drinks;
+      if (data.logs) state.logs = data.logs;
+      save(); renderHome();
+      showToast('✓ Данные импортированы');
+    } catch { showToast('⚠ Ошибка импорта'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function clearLogs() {
+  if (!confirm('Удалить все записи? База напитков сохранится.')) return;
+  state.logs = [];
+  save(); renderHome();
+  showToast('Записи удалены');
+}
+
+// ====== UTILS ======
+function toDateStr(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleOverlayClick(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ====== INIT ======
+load();
+renderHome();
+</script>
+</body>
+</html>
