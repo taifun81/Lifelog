@@ -7,892 +7,1292 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="LifeLog">
 <title>LifeLog</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #080808;
-  --bg2: #111111;
-  --bg3: #1a1a1a;
-  --bg4: #222222;
-  --line: rgba(255,255,255,0.06);
-  --line2: rgba(255,255,255,0.1);
-  --text: #f0f0f0;
-  --muted: #666;
-  --muted2: #444;
-  --accent: #c8a96e;
-  --accent2: #e8c98e;
-  --accent-dim: rgba(200,169,110,0.12);
-  --accent-glow: rgba(200,169,110,0.06);
-  --red: #e05555;
-  --green: #5ec47a;
-  --blue: #5b9cf6;
-  --r: 16px;
-  --r2: 12px;
+:root{
+  --bg:#080808;--bg2:#111;--bg3:#1a1a1a;--bg4:#242424;
+  --line:rgba(255,255,255,.07);--line2:rgba(255,255,255,.12);
+  --text:#f0f0f0;--muted:#666;--muted2:#3a3a3a;
+  --accent:#c8a96e;--accent-dim:rgba(200,169,110,.13);
+  --red:#e05555;--green:#5ec47a;--blue:#5b9cf6;--yellow:#f0c040;
+  --r:16px;--r2:12px;--r3:10px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; }
-
-/* APP SHELL */
-#app { height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
-
-/* TOP BAR */
-.topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 20px 10px;
-  padding-top: max(14px, env(safe-area-inset-top, 14px));
-  background: var(--bg);
-  border-bottom: 1px solid var(--line);
-  flex-shrink: 0;
-  position: relative;
-}
-.topbar-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
-.topbar-title span { color: var(--accent); }
-.topbar-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line2); background: var(--bg2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--muted); transition: .15s; }
-.topbar-btn:active { background: var(--bg3); }
-
-/* CONTENT */
-#content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
-
-/* NAV */
-.nav {
-  display: flex; align-items: center; justify-content: space-around;
-  padding: 10px 0;
-  padding-bottom: max(10px, env(safe-area-inset-bottom, 10px));
-  background: var(--bg);
-  border-top: 1px solid var(--line);
-  flex-shrink: 0;
-}
-.nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 16px; border-radius: 12px; transition: .15s; }
-.nav-item .nav-icon { font-size: 20px; line-height: 1; }
-.nav-item .nav-label { font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.2px; }
-.nav-item.active .nav-label { color: var(--accent); }
-.nav-item.active .nav-icon { filter: none; }
-
-/* SCREENS */
-.screen { display: none; padding: 20px; min-height: 100%; }
-.screen.active { display: block; }
-
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif}
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;padding-top:max(14px,env(safe-area-inset-top,14px));background:var(--bg);border-bottom:1px solid var(--line);flex-shrink:0}
+.topbar-title{font-size:18px;font-weight:700;letter-spacing:-.3px}.topbar-title span{color:var(--accent)}
+.topbar-back{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;color:var(--accent);cursor:pointer;opacity:0;pointer-events:none;transition:.2s}
+.topbar-back.visible{opacity:1;pointer-events:all}
+#content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.nav{display:flex;align-items:center;justify-content:space-around;padding:10px 0;padding-bottom:max(10px,env(safe-area-inset-bottom,10px));background:var(--bg);border-top:1px solid var(--line);flex-shrink:0}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 12px}
+.nav-item .nav-icon{font-size:22px;line-height:1}
+.nav-item .nav-label{font-size:10px;font-weight:500;color:var(--muted)}
+.nav-item.active .nav-label{color:var(--accent)}
+.screen{display:none;padding:20px;min-height:100%}.screen.active{display:block}
 /* HOME */
-.home-header { margin-bottom: 24px; }
-.home-date { font-size: 13px; color: var(--muted); font-weight: 400; margin-bottom: 4px; }
-.home-greeting { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
-.home-greeting span { color: var(--accent); }
-
-/* TODAY CARD */
-.today-card {
-  background: var(--bg2);
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  padding: 20px;
-  margin-bottom: 20px;
-  position: relative;
-  overflow: hidden;
-}
-.today-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent), transparent);
-}
-.today-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
-.today-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.today-stat { text-align: center; }
-.today-stat-val { font-size: 24px; font-weight: 700; color: var(--accent); font-family: 'DM Mono', monospace; line-height: 1; margin-bottom: 4px; }
-.today-stat-label { font-size: 11px; color: var(--muted); }
-
-/* ADD BUTTON */
-.add-btn {
-  width: 100%;
-  background: var(--accent);
-  color: #1a1000;
-  border: none;
-  border-radius: var(--r);
-  padding: 18px;
-  font-size: 16px;
-  font-weight: 700;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 24px;
-  transition: .15s;
-  letter-spacing: -0.2px;
-}
-.add-btn:active { opacity: 0.85; transform: scale(0.98); }
-
-/* RECENT */
-.section-title { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 12px; }
-.log-item {
-  background: var(--bg2);
-  border: 1px solid var(--line);
-  border-radius: var(--r2);
-  padding: 14px 16px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.log-item-icon { font-size: 24px; line-height: 1; flex-shrink: 0; }
-.log-item-info { flex: 1; min-width: 0; }
-.log-item-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.log-item-meta { font-size: 12px; color: var(--muted); }
-.log-item-right { text-align: right; flex-shrink: 0; }
-.log-item-vol { font-size: 14px; font-weight: 600; color: var(--accent); font-family: 'DM Mono', monospace; }
-.log-item-time { font-size: 11px; color: var(--muted2); margin-top: 2px; }
-.log-item-del { width: 28px; height: 28px; border-radius: 8px; border: none; background: rgba(224,85,85,0.1); color: var(--red); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.log-item-del:active { background: rgba(224,85,85,0.2); }
-
-.empty-state { text-align: center; padding: 40px 20px; }
-.empty-state-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
-.empty-state-text { font-size: 15px; color: var(--muted); }
-
+.home-date{font-size:13px;color:var(--muted);margin-bottom:6px}
+.home-greeting{font-size:24px;font-weight:700;letter-spacing:-.5px;line-height:1.2;margin-bottom:20px}
+.today-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:20px;position:relative;overflow:hidden}
+.today-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.today-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
+.today-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.today-stat{text-align:center}
+.today-stat-val{font-size:20px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;line-height:1;margin-bottom:3px}
+.today-stat-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.add-btn{width:100%;background:var(--accent);color:#1a1000;border:none;border-radius:var(--r);padding:16px;font-size:16px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;transition:.15s}
+.add-btn:active{opacity:.85;transform:scale(.98)}
+/* FAVS */
+.favs-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:8px;margin-bottom:20px}
+.fav-btn{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:.15s}
+.fav-btn:active{background:var(--bg3)}
+.fav-btn-icon{font-size:22px}
+.fav-btn-name{font-size:9px;color:var(--muted);font-weight:600;text-align:center;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sec-title{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
+.log-item{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.log-icon{font-size:22px;flex-shrink:0}
+.log-info{flex:1;min-width:0}
+.log-name{font-size:14px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-meta{font-size:11px;color:var(--muted)}
+.log-right{text-align:right;flex-shrink:0}
+.log-vol{font-size:13px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace}
+.log-time{font-size:10px;color:var(--muted2);margin-top:2px}
+.log-del{width:28px;height:28px;border-radius:8px;border:none;background:rgba(224,85,85,.1);color:var(--red);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.empty{text-align:center;padding:36px 20px}
+.empty-icon{font-size:44px;margin-bottom:10px;opacity:.35}
+.empty-text{font-size:14px;color:var(--muted)}
 /* MODAL */
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 100;
-  background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(8px);
-  display: flex; align-items: flex-end;
-  opacity: 0; pointer-events: none;
-  transition: opacity .25s;
-}
-.modal-overlay.open { opacity: 1; pointer-events: all; }
-.modal {
-  width: 100%; background: var(--bg2);
-  border-radius: 24px 24px 0 0;
-  border: 1px solid var(--line2);
-  border-bottom: none;
-  transform: translateY(100%);
-  transition: transform .3s cubic-bezier(.32,.72,0,1);
-  max-height: 90vh;
-  overflow-y: auto;
-  padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
-}
-.modal-overlay.open .modal { transform: translateY(0); }
-.modal-handle { width: 36px; height: 4px; background: var(--bg4); border-radius: 2px; margin: 14px auto 20px; }
-.modal-title { font-size: 20px; font-weight: 700; padding: 0 20px; margin-bottom: 20px; letter-spacing: -0.3px; }
-.modal-close { position: absolute; top: 16px; right: 20px; width: 30px; height: 30px; border-radius: 50%; background: var(--bg3); border: none; color: var(--muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-/* DRINK SELECTOR */
-.drink-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 20px 20px; }
-.drink-card {
-  background: var(--bg3); border: 1px solid var(--line); border-radius: var(--r2);
-  padding: 14px 8px; text-align: center; cursor: pointer; transition: .15s;
-}
-.drink-card:active { transform: scale(0.95); }
-.drink-card.selected { background: var(--accent-dim); border-color: var(--accent); }
-.drink-card-icon { font-size: 28px; margin-bottom: 6px; }
-.drink-card-name { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.2; }
-.drink-card-abv { font-size: 10px; color: var(--muted); margin-top: 2px; }
-
-/* VOLUME SELECTOR */
-.vol-section { padding: 0 20px 16px; }
-.vol-label { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-.vol-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
-.vol-btn {
-  background: var(--bg3); border: 1px solid var(--line); border-radius: 10px;
-  padding: 12px 8px; text-align: center; cursor: pointer; transition: .15s;
-}
-.vol-btn:active { transform: scale(0.95); }
-.vol-btn.selected { background: var(--accent-dim); border-color: var(--accent); }
-.vol-btn-val { font-size: 15px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--accent); }
-.vol-btn-unit { font-size: 10px; color: var(--muted); margin-top: 2px; }
-
-/* CUSTOM VOL */
-.custom-vol { display: flex; gap: 8px; align-items: center; }
-.custom-vol input {
-  flex: 1; background: var(--bg3); border: 1px solid var(--line2); border-radius: 10px;
-  padding: 12px 14px; font-size: 16px; font-family: 'DM Mono', monospace;
-  color: var(--text); font-weight: 600; outline: none;
-}
-.custom-vol input:focus { border-color: var(--accent); }
-.vol-unit-toggle { display: flex; background: var(--bg3); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
-.vol-unit-btn { padding: 12px 14px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); transition: .15s; border: none; background: none; font-family: 'DM Sans', sans-serif; }
-.vol-unit-btn.active { background: var(--accent); color: #1a1000; }
-
-/* CONFIRM BTN */
-.confirm-btn {
-  margin: 0 20px; width: calc(100% - 40px);
-  background: var(--accent); color: #1a1000;
-  border: none; border-radius: var(--r); padding: 18px;
-  font-size: 16px; font-weight: 700; font-family: 'DM Sans', sans-serif;
-  cursor: pointer; transition: .15s;
-}
-.confirm-btn:disabled { opacity: 0.4; }
-.confirm-btn:not(:disabled):active { opacity: 0.85; transform: scale(0.98); }
-
-/* STATS SCREEN */
-.stats-tabs { display: flex; gap: 6px; margin-bottom: 20px; background: var(--bg2); border-radius: 12px; padding: 4px; }
-.stats-tab { flex: 1; padding: 8px; border-radius: 9px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); border: none; background: none; font-family: 'DM Sans', sans-serif; transition: .15s; }
-.stats-tab.active { background: var(--bg4); color: var(--text); }
-
-.stat-card { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; margin-bottom: 12px; }
-.stat-card-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-.stat-card-val { font-size: 32px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--accent); }
-.stat-card-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
-/* BAR CHART */
-.bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 80px; margin-top: 12px; }
-.bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
-.bar { width: 100%; background: var(--accent-dim); border-radius: 4px 4px 0 0; border: 1px solid rgba(200,169,110,0.2); min-height: 3px; transition: height .3s; position: relative; }
-.bar.today { background: var(--accent); border-color: var(--accent); }
-.bar-label { font-size: 9px; color: var(--muted2); font-family: 'DM Mono', monospace; }
-
-/* DRINKS SCREEN */
-.drink-list-item {
-  background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r2);
-  padding: 14px 16px; margin-bottom: 8px;
-  display: flex; align-items: center; gap: 12px;
-}
-.drink-list-icon { font-size: 28px; }
-.drink-list-info { flex: 1; }
-.drink-list-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
-.drink-list-meta { font-size: 12px; color: var(--muted); }
-.drink-list-del { width: 30px; height: 30px; border-radius: 8px; border: none; background: rgba(224,85,85,0.1); color: var(--red); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-.add-drink-btn {
-  width: 100%; background: transparent; border: 1px dashed var(--line2);
-  border-radius: var(--r2); padding: 16px; font-size: 14px; font-weight: 600;
-  color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: .15s; margin-top: 4px;
-}
-.add-drink-btn:active { background: var(--bg2); }
-
+.modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{width:100%;background:var(--bg2);border-radius:24px 24px 0 0;border-top:1px solid var(--line2);transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);max-height:92vh;overflow-y:auto;padding-bottom:max(24px,env(safe-area-inset-bottom,24px));position:relative}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-handle{width:36px;height:4px;background:var(--bg4);border-radius:2px;margin:14px auto 18px}
+.modal-title{font-size:20px;font-weight:700;padding:0 20px;margin-bottom:4px;letter-spacing:-.3px}
+.modal-sub{font-size:13px;color:var(--muted);padding:0 20px;margin-bottom:20px}
+.modal-close{position:absolute;top:16px;right:20px;width:30px;height:30px;border-radius:50%;background:var(--bg3);border:none;color:var(--muted);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+/* LEVEL NAV */
+.level-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 20px}
+.level-card{background:var(--bg3);border:1px solid var(--line);border-radius:var(--r);padding:20px 16px;cursor:pointer;transition:.15s;text-align:center;position:relative}
+.level-card:active{transform:scale(.96)}
+.level-card-icon{font-size:36px;margin-bottom:8px}
+.level-card-name{font-size:15px;font-weight:700;margin-bottom:2px}
+.level-card-sub{font-size:11px;color:var(--muted)}
+.level-card-arrow{position:absolute;top:12px;right:12px;font-size:12px;color:var(--muted2)}
+.subcat-list{padding:0 20px 16px}
+.subcat-item{background:var(--bg3);border:1px solid var(--line);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.15s}
+.subcat-item:active{background:var(--bg4)}
+.subcat-icon{font-size:26px;flex-shrink:0}
+.subcat-info{flex:1}
+.subcat-name{font-size:15px;font-weight:600;margin-bottom:2px}
+.subcat-count{font-size:12px;color:var(--muted)}
+.subcat-arrow{font-size:14px;color:var(--muted2)}
+.drink-sel-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0 20px 16px}
+.drink-sel-card{background:var(--bg3);border:1px solid var(--line);border-radius:var(--r2);padding:14px 12px;cursor:pointer;transition:.15s}
+.drink-sel-card:active{transform:scale(.96)}
+.drink-sel-card.selected{background:var(--accent-dim);border-color:var(--accent)}
+.drink-sel-icon{font-size:26px;margin-bottom:6px}
+.drink-sel-name{font-size:13px;font-weight:600;line-height:1.2;margin-bottom:4px}
+.drink-sel-meta{font-size:11px;color:var(--muted)}
+/* VOL */
+.vol-section{padding:0 20px 16px}
+.vol-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.vol-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.vol-btn{background:var(--bg3);border:1px solid var(--line);border-radius:var(--r3);padding:12px 6px;text-align:center;cursor:pointer;transition:.15s}
+.vol-btn.selected{background:var(--accent-dim);border-color:var(--accent)}
+.vol-btn-val{font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)}
+.vol-btn-unit{font-size:9px;color:var(--muted);margin-top:2px}
+.vol-custom{display:flex;gap:8px}
+.vol-custom input{flex:1;background:var(--bg3);border:1px solid var(--line2);border-radius:var(--r3);padding:12px;font-size:16px;font-family:'DM Mono',monospace;color:var(--text);font-weight:600;outline:none}
+.vol-custom input:focus{border-color:var(--accent)}
+.unit-toggle{display:flex;background:var(--bg3);border:1px solid var(--line);border-radius:var(--r3);overflow:hidden}
+.unit-btn{padding:12px 10px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);border:none;background:none;font-family:'DM Sans',sans-serif}
+.unit-btn.active{background:var(--accent);color:#1a1000}
+.date-row{display:flex;gap:8px;padding:0 20px 16px;align-items:center}
+.date-row input[type=date]{flex:1;background:var(--bg3);border:1px solid var(--line2);border-radius:var(--r3);padding:12px;font-size:15px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
+.date-row input[type=date]:focus{border-color:var(--accent)}
+.today-btn-sm{padding:10px 12px;background:var(--bg3);border:1px solid var(--line2);border-radius:var(--r3);font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.confirm-btn{margin:0 20px;width:calc(100% - 40px);background:var(--accent);color:#1a1000;border:none;border-radius:var(--r);padding:16px;font-size:16px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:.15s}
+.confirm-btn:disabled{opacity:.35}
+.confirm-btn:not(:disabled):active{opacity:.85;transform:scale(.98)}
+.breadcrumb{display:flex;align-items:center;gap:6px;padding:0 20px 14px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.breadcrumb-item{cursor:pointer;color:var(--accent)}
+.breadcrumb-sep{color:var(--muted2)}
+/* STATS */
+.stats-tabs{display:flex;background:var(--bg2);border-radius:12px;padding:3px;margin-bottom:16px;gap:3px}
+.stats-tab{flex:1;padding:8px;border-radius:9px;text-align:center;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);border:none;background:none;font-family:'DM Sans',sans-serif}
+.stats-tab.active{background:var(--bg4);color:var(--text)}
+.stat-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.stat-card-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.stat-val{font-size:30px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)}
+/* CHART */
+.chart-toggle{display:flex;gap:6px;margin-bottom:12px}
+.chart-btn{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--line);background:var(--bg3);color:var(--muted);font-family:'DM Sans',sans-serif}
+.chart-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+.bar-chart-wrap{position:relative;height:120px;margin-top:8px}
+.chart-threshold{position:absolute;left:0;right:0;border-top:1px dashed;font-size:9px;padding-left:4px;font-family:'DM Mono',monospace}
+.bar-chart{display:flex;align-items:flex-end;gap:3px;height:90px;margin-bottom:4px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end}
+.bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;transition:height .3s}
+.bar.green{background:var(--green)}
+.bar.yellow{background:var(--yellow)}
+.bar.red{background:var(--red)}
+.bar.empty-day{background:var(--green);opacity:.3;min-height:4px}
+.bar-val{font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;text-align:center}
+.bar-lbl{font-size:9px;color:var(--muted2);font-family:'DM Mono',monospace;text-align:center}
+/* LINE CHART */
+.line-chart-wrap{height:120px;position:relative;margin-top:8px}
+canvas.line-chart{width:100%;height:100%}
+/* ALL TIME */
+.alltime-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.alltime-title{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px}
+.alltime-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.alltime-row:last-child{border:none}
+.alltime-label{font-size:14px;color:var(--text)}
+.alltime-val{font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)}
+/* CALENDAR */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-month-btn{font-size:16px;font-weight:700;cursor:pointer;color:var(--accent);text-decoration:underline dotted;text-underline-offset:3px}
+.cal-nav{width:34px;height:34px;border-radius:10px;border:1px solid var(--line2);background:var(--bg2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--muted)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:14px}
+.cal-dn{font-size:10px;color:var(--muted);text-align:center;padding:4px 0;font-weight:600}
+.cal-d{font-size:12px;text-align:center;padding:6px 2px;border-radius:8px;cursor:pointer;color:var(--muted);position:relative;transition:.1s}
+.cal-d.has-log{color:var(--text)}
+.cal-d.has-log::after{content:'';position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--accent)}
+.cal-d.sober::after{background:var(--green)}
+.cal-d.sel{background:var(--accent);color:#1a1000;font-weight:700}
+.cal-d.today:not(.sel){color:var(--accent);font-weight:700}
+.cal-d.other{opacity:.2}
+.cal-detail{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.cal-detail-title{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--accent)}
+.cal-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.cal-item:last-child{border:none}
+/* YEAR PICKER */
+.year-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 20px 20px}
+.year-btn{background:var(--bg3);border:1px solid var(--line);border-radius:var(--r2);padding:14px;text-align:center;font-size:16px;font-weight:600;cursor:pointer}
+.year-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+/* DRINKS DB */
+.cat-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:.15s}
+.cat-card:active{background:var(--bg3)}
+.cat-card-icon{font-size:32px;flex-shrink:0}
+.cat-card-info{flex:1}
+.cat-card-name{font-size:16px;font-weight:700;margin-bottom:3px}
+.cat-card-sub{font-size:12px;color:var(--muted)}
+.cat-card-arrow{font-size:16px;color:var(--muted2)}
+.drink-db-item{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);padding:14px;margin-bottom:8px}
+.drink-db-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.drink-db-icon{font-size:26px}
+.drink-db-name{font-size:15px;font-weight:700;flex:1}
+.drink-db-actions{display:flex;gap:6px}
+.db-btn{width:30px;height:30px;border-radius:8px;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.db-edit{background:rgba(91,156,246,.1);color:var(--blue)}
+.db-del{background:rgba(224,85,85,.1);color:var(--red)}
+.db-restore{background:rgba(94,196,122,.1);color:var(--green)}
+.drink-db-nutrition{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.nutr-cell{background:var(--bg3);border-radius:8px;padding:8px 6px;text-align:center}
+.nutr-val{font-size:13px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)}
+.nutr-label{font-size:9px;color:var(--muted);margin-top:2px}
+.add-drink-btn{width:100%;background:transparent;border:1px dashed var(--line2);border-radius:var(--r2);padding:14px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px}
+/* EDIT MODAL */
+.input-group{padding:0 20px;margin-bottom:14px}
+.input-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.input-field{width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:var(--r3);padding:13px;font-size:16px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
+.input-field:focus{border-color:var(--accent)}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 20px;margin-bottom:14px}
+.input-row .input-group{padding:0;margin:0}
+.emoji-grid{display:flex;flex-wrap:wrap;gap:8px}
+.emoji-opt{width:42px;height:42px;border-radius:10px;background:var(--bg3);border:1px solid var(--line);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.emoji-opt.sel{background:var(--accent-dim);border-color:var(--accent)}
 /* SETTINGS */
-.settings-section { margin-bottom: 24px; }
-.settings-item {
-  background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r2);
-  padding: 16px; margin-bottom: 8px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.settings-item-label { font-size: 15px; font-weight: 500; }
-.settings-item-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.settings-btn {
-  background: var(--bg3); border: 1px solid var(--line2); border-radius: 8px;
-  padding: 8px 14px; font-size: 13px; font-weight: 600; color: var(--accent);
-  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: .15s;
-}
-.settings-btn:active { opacity: 0.7; }
-.settings-btn.danger { color: var(--red); border-color: rgba(224,85,85,0.2); background: rgba(224,85,85,0.05); }
-
+.settings-item{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);padding:16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.settings-btn{background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;font-family:'DM Sans',sans-serif}
+.settings-btn.danger{color:var(--red);border-color:rgba(224,85,85,.2);background:rgba(224,85,85,.05)}
 /* TOAST */
-.toast {
-  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: var(--bg3); border: 1px solid var(--line2); border-radius: 12px;
-  padding: 12px 20px; font-size: 14px; font-weight: 600; color: var(--text);
-  opacity: 0; transition: all .25s; z-index: 200; white-space: nowrap;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ADD DRINK MODAL INPUTS */
-.input-group { padding: 0 20px; margin-bottom: 16px; }
-.input-label { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-.input-field {
-  width: 100%; background: var(--bg3); border: 1px solid var(--line2);
-  border-radius: 10px; padding: 14px; font-size: 16px; color: var(--text);
-  font-family: 'DM Sans', sans-serif; outline: none;
-}
-.input-field:focus { border-color: var(--accent); }
-.emoji-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-.emoji-opt { width: 44px; height: 44px; border-radius: 10px; background: var(--bg3); border: 1px solid var(--line); font-size: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: .15s; }
-.emoji-opt.selected { background: var(--accent-dim); border-color: var(--accent); }
-.emoji-opt:active { transform: scale(0.9); }
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);border:1px solid var(--line2);border-radius:12px;padding:11px 18px;font-size:14px;font-weight:600;color:var(--text);opacity:0;transition:all .25s;z-index:200;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* CONFIRM DIALOG */
+.confirm-overlay{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.confirm-overlay.open{opacity:1;pointer-events:all}
+.confirm-box{background:var(--bg2);border:1px solid var(--line2);border-radius:var(--r);padding:24px;width:100%;max-width:320px}
+.confirm-title{font-size:17px;font-weight:700;margin-bottom:8px}
+.confirm-msg{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.confirm-btns{display:flex;gap:10px}
+.confirm-yes{flex:1;background:var(--red);color:#fff;border:none;border-radius:var(--r2);padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.confirm-no{flex:1;background:var(--bg3);color:var(--text);border:1px solid var(--line2);border-radius:var(--r2);padding:13px;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
 </style>
 </head>
 <body>
 <div id="app">
-  <!-- TOP BAR -->
   <div class="topbar">
+    <div class="topbar-back" id="topbarBack" onclick="handleBack()">‹ <span id="backLabel">Назад</span></div>
     <div class="topbar-title">Life<span>Log</span></div>
-    <div style="display:flex;gap:8px">
-      <div class="topbar-btn" onclick="showScreen('settings')" title="Настройки">⚙️</div>
-    </div>
+    <div style="width:60px"></div>
   </div>
-
-  <!-- CONTENT -->
   <div id="content">
     <!-- HOME -->
     <div id="screen-home" class="screen active">
-      <div class="home-header">
-        <div class="home-date" id="homeDate"></div>
-        <div class="home-greeting">Сегодня,<br><span id="homeGreeting"></span></div>
-      </div>
-
+      <div class="home-date" id="homeDate"></div>
+      <div class="home-greeting" id="homeGreeting"></div>
       <div class="today-card">
-        <div class="today-label">Сегодня</div>
+        <div class="today-label" id="lbl-today">Сегодня</div>
         <div class="today-stats">
-          <div class="today-stat">
-            <div class="today-stat-val" id="todayDrinks">0</div>
-            <div class="today-stat-label">напитков</div>
-          </div>
-          <div class="today-stat">
-            <div class="today-stat-val" id="todayVol">0</div>
-            <div class="today-stat-label">мл всего</div>
-          </div>
-          <div class="today-stat">
-            <div class="today-stat-val" id="todayAlc">0.0</div>
-            <div class="today-stat-label">г алкоголя</div>
-          </div>
+          <div class="today-stat"><div class="today-stat-val" id="tDrinks">0</div><div class="today-stat-label" id="lbl-drinks">напитков</div></div>
+          <div class="today-stat"><div class="today-stat-val" id="tVol">0</div><div class="today-stat-label">мл</div></div>
+          <div class="today-stat"><div class="today-stat-val" id="tAlc">0.0</div><div class="today-stat-label" id="lbl-alc">г алк.</div></div>
+          <div class="today-stat"><div class="today-stat-val" id="tKcal">0</div><div class="today-stat-label">ккал</div></div>
         </div>
       </div>
-
-      <button class="add-btn" onclick="openAddModal()">
-        <span style="font-size:20px">＋</span> Добавить напиток
-      </button>
-
-      <div class="section-title">Последние записи</div>
+      <div id="favsSection" style="display:none">
+        <div class="sec-title" id="lbl-favs">Быстрый выбор</div>
+        <div class="favs-row" id="favsList"></div>
+      </div>
+      <button class="add-btn" id="addBtnMain" onclick="openAddModal()"><span style="font-size:20px">＋</span> <span id="lbl-add">Добавить напиток</span></button>
+      <div class="sec-title" id="lbl-recent">Последние записи</div>
       <div id="recentList"></div>
     </div>
-
     <!-- STATS -->
     <div id="screen-stats" class="screen">
-      <div style="margin-bottom:20px">
-        <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px">Статистика</div>
-        <div style="font-size:13px;color:var(--muted)">Твои паттерны потребления</div>
-      </div>
+      <div style="font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px" id="lbl-stats-title">Статистика</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px" id="lbl-stats-sub">Твои паттерны</div>
       <div class="stats-tabs">
-        <button class="stats-tab active" onclick="setStatTab('week',this)">Неделя</button>
-        <button class="stats-tab" onclick="setStatTab('month',this)">Месяц</button>
-        <button class="stats-tab" onclick="setStatTab('all',this)">Всё время</button>
+        <button class="stats-tab active" id="tab-week" onclick="setStatTab('week',this)">Неделя</button>
+        <button class="stats-tab" id="tab-month" onclick="setStatTab('month',this)">Месяц</button>
+        <button class="stats-tab" id="tab-year" onclick="setStatTab('year',this)">Год</button>
+        <button class="stats-tab" id="tab-all" onclick="setStatTab('all',this)">Всё</button>
       </div>
       <div id="statsContent"></div>
+      <!-- ALL TIME always visible -->
+      <div class="alltime-card" id="alltimeCard"></div>
     </div>
-
+    <!-- CALENDAR -->
+    <div id="screen-calendar" class="screen">
+      <div style="font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:16px" id="lbl-cal-title">Календарь</div>
+      <div class="cal-header">
+        <div class="cal-nav" onclick="calPrev()">‹</div>
+        <div class="cal-month-btn" id="calTitle" onclick="openYearPicker()"></div>
+        <div class="cal-nav" onclick="calNext()">›</div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div id="calDetail"></div>
+    </div>
     <!-- DRINKS -->
     <div id="screen-drinks" class="screen">
-      <div style="margin-bottom:20px">
-        <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px">База напитков</div>
-        <div style="font-size:13px;color:var(--muted)">Редактируй под себя</div>
-      </div>
-      <div id="drinksList"></div>
-      <button class="add-drink-btn" onclick="openAddDrinkModal()">＋ Добавить напиток</button>
+      <div style="font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px" id="drinksTitle">База напитков</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px" id="drinksSub">Выбери категорию</div>
+      <div id="drinksContent"></div>
     </div>
-
     <!-- SETTINGS -->
     <div id="screen-settings" class="screen">
-      <div style="margin-bottom:20px">
-        <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px">Настройки</div>
-      </div>
-      <div class="settings-section">
-        <div class="section-title">Данные</div>
-        <div class="settings-item">
-          <div>
-            <div class="settings-item-label">Экспорт данных</div>
-            <div class="settings-item-sub">Сохранить резервную копию</div>
-          </div>
-          <button class="settings-btn" onclick="exportData()">⬇ JSON</button>
-        </div>
-        <div class="settings-item">
-          <div>
-            <div class="settings-item-label">Импорт данных</div>
-            <div class="settings-item-sub">Восстановить из копии</div>
-          </div>
-          <button class="settings-btn" onclick="importData()">⬆ JSON</button>
+      <div style="font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:16px" id="lbl-settings-title">Настройки</div>
+      <div class="sec-title">Язык / Language / Sprache</div>
+      <div class="settings-item">
+        <div><div style="font-size:15px;font-weight:500" id="lbl-lang">Язык интерфейса</div><div style="font-size:12px;color:var(--muted)" id="langSub">Русский</div></div>
+        <div style="display:flex;gap:6px">
+          <button class="settings-btn" id="langRU" onclick="setLang('ru')">RU</button>
+          <button class="settings-btn" id="langDE" onclick="setLang('de')" style="opacity:.4">DE</button>
+          <button class="settings-btn" id="langEN" onclick="setLang('en')" style="opacity:.4">EN</button>
         </div>
       </div>
-      <div class="settings-section">
-        <div class="section-title">Опасная зона</div>
-        <div class="settings-item">
-          <div>
-            <div class="settings-item-label">Очистить все записи</div>
-            <div class="settings-item-sub">Удалить историю, база напитков сохранится</div>
-          </div>
-          <button class="settings-btn danger" onclick="clearLogs()">Удалить</button>
-        </div>
+      <div style="margin-top:12px" class="sec-title" id="lbl-favs-settings">Любимые напитки</div>
+      <div class="settings-item">
+        <div><div style="font-size:15px;font-weight:500" id="lbl-favs-desc">Быстрый доступ (до 5)</div><div style="font-size:12px;color:var(--muted)" id="lbl-favs-hint">Выбери любимые напитки</div></div>
+        <button class="settings-btn" onclick="openFavsModal()">✏️</button>
       </div>
-      <div style="text-align:center;padding:20px;color:var(--muted2);font-size:12px">
-        LifeLog v1.0 · Сделано с ❤️
-      </div>
+      <div style="margin-top:12px" class="sec-title" id="lbl-data-section">Данные</div>
+      <div class="settings-item"><div><div style="font-size:15px;font-weight:500" id="lbl-export">Экспорт данных</div><div style="font-size:12px;color:var(--muted)">JSON</div></div><button class="settings-btn" onclick="exportData()">⬇ JSON</button></div>
+      <div class="settings-item"><div><div style="font-size:15px;font-weight:500" id="lbl-import">Импорт данных</div><div style="font-size:12px;color:var(--muted)">JSON</div></div><button class="settings-btn" onclick="importData()">⬆ JSON</button></div>
+      <div style="margin-top:12px" class="sec-title" id="lbl-db-section">База напитков</div>
+      <div class="settings-item"><div><div style="font-size:15px;font-weight:500" id="lbl-reset-db">Сброс до заводских</div><div style="font-size:12px;color:var(--muted)" id="lbl-reset-db-sub">Восстановить оригинальную базу</div></div><button class="settings-btn danger" onclick="resetDrinks()">↺</button></div>
+      <div style="margin-top:12px" class="sec-title" id="lbl-danger">Опасная зона</div>
+      <div class="settings-item"><div><div style="font-size:15px;font-weight:500" id="lbl-clear">Очистить записи</div><div style="font-size:12px;color:var(--muted)" id="lbl-clear-sub">База напитков сохранится</div></div><button class="settings-btn danger" onclick="clearLogs()">🗑</button></div>
+      <div style="text-align:center;padding:20px;color:var(--muted2);font-size:12px">LifeLog v1.0.2</div>
     </div>
   </div>
-
-  <!-- NAV -->
   <div class="nav">
-    <div class="nav-item active" id="nav-home" onclick="showScreen('home')">
-      <div class="nav-icon">🏠</div>
-      <div class="nav-label">Главная</div>
-    </div>
-    <div class="nav-item" id="nav-stats" onclick="showScreen('stats')">
-      <div class="nav-icon">📊</div>
-      <div class="nav-label">Статистика</div>
-    </div>
-    <div class="nav-item" id="nav-drinks" onclick="showScreen('drinks')">
-      <div class="nav-icon">🍶</div>
-      <div class="nav-label">Напитки</div>
-    </div>
-    <div class="nav-item" id="nav-settings" onclick="showScreen('settings')">
-      <div class="nav-icon">⚙️</div>
-      <div class="nav-label">Настройки</div>
-    </div>
+    <div class="nav-item active" id="nav-home" onclick="showScreen('home')"><div class="nav-icon">🏠</div><div class="nav-label" id="nav-lbl-home">Главная</div></div>
+    <div class="nav-item" id="nav-stats" onclick="showScreen('stats')"><div class="nav-icon">📊</div><div class="nav-label" id="nav-lbl-stats">Статистика</div></div>
+    <div class="nav-item" id="nav-calendar" onclick="showScreen('calendar')"><div class="nav-icon">📅</div><div class="nav-label" id="nav-lbl-cal">Календарь</div></div>
+    <div class="nav-item" id="nav-drinks" onclick="showScreen('drinks')"><div class="nav-icon">🍺</div><div class="nav-label" id="nav-lbl-drinks">Напитки</div></div>
+    <div class="nav-item" id="nav-settings" onclick="showScreen('settings')"><div class="nav-icon">⚙️</div><div class="nav-label" id="nav-lbl-settings">Настройки</div></div>
   </div>
 </div>
 
 <!-- ADD LOG MODAL -->
-<div class="modal-overlay" id="addModal" onclick="handleOverlayClick(event,'addModal')">
-  <div class="modal" style="position:relative">
+<div class="modal-overlay" id="addModal" onclick="handleOverlay(event,'addModal')">
+  <div class="modal">
     <div class="modal-handle"></div>
     <button class="modal-close" onclick="closeModal('addModal')">✕</button>
-    <div class="modal-title">Добавить запись</div>
-
-    <div style="padding:0 20px 12px">
-      <div class="vol-label">Выбери напиток</div>
-    </div>
-    <div class="drink-grid" id="modalDrinkGrid"></div>
-
-    <div class="vol-section">
-      <div class="vol-label">Объём</div>
-      <div class="vol-grid" id="volPresets"></div>
-      <div class="custom-vol">
-        <input type="number" id="customVol" placeholder="Другой объём" min="1" max="9999" oninput="onCustomVolInput()">
-        <div class="vol-unit-toggle">
-          <button class="vol-unit-btn active" onclick="setUnit('мл',this)">мл</button>
-          <button class="vol-unit-btn" onclick="setUnit('сл',this)">сл</button>
+    <div class="modal-title" id="addModalTitle">Добавить запись</div>
+    <div class="modal-sub" id="addModalSub">Выбери категорию</div>
+    <div class="breadcrumb" id="addBreadcrumb" style="display:none"></div>
+    <div id="addStep"></div>
+    <div id="addVolSection" style="display:none">
+      <div class="vol-section">
+        <div class="vol-label" id="lbl-date">Дата</div>
+        <div class="date-row">
+          <input type="date" id="logDate">
+          <button class="today-btn-sm" onclick="resetLogDate()" id="lbl-today-btn">Сегодня</button>
+        </div>
+        <div class="vol-label" id="lbl-volume">Объём</div>
+        <div class="vol-grid" id="volPresets"></div>
+        <div class="vol-custom">
+          <input type="number" id="customVol" placeholder="Другой объём" min="1" max="9999" oninput="onCustomVol()">
+          <div class="unit-toggle">
+            <button class="unit-btn active" onclick="setUnit('мл',this)">мл</button>
+            <button class="unit-btn" onclick="setUnit('сл',this)">сл</button>
+            <button class="unit-btn" onclick="setUnit('л',this)">л</button>
+          </div>
         </div>
       </div>
+      <button class="confirm-btn" id="confirmBtn" onclick="confirmLog()" disabled>Добавить запись</button>
     </div>
-
-    <button class="confirm-btn" id="confirmBtn" onclick="confirmLog()" disabled>Добавить запись</button>
   </div>
 </div>
 
-<!-- ADD DRINK MODAL -->
-<div class="modal-overlay" id="addDrinkModal" onclick="handleOverlayClick(event,'addDrinkModal')">
-  <div class="modal" style="position:relative">
+<!-- QUICK ADD MODAL (for favs and calendar) -->
+<div class="modal-overlay" id="quickAddModal" onclick="handleOverlay(event,'quickAddModal')">
+  <div class="modal">
     <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('addDrinkModal')">✕</button>
-    <div class="modal-title">Новый напиток</div>
+    <button class="modal-close" onclick="closeModal('quickAddModal')">✕</button>
+    <div class="modal-title" id="quickAddTitle">Добавить</div>
+    <div class="modal-sub" id="quickAddSub"></div>
+    <div class="vol-section" style="margin-top:8px">
+      <div class="vol-label" id="lbl-qa-date">Дата</div>
+      <div class="date-row">
+        <input type="date" id="qaDate">
+        <button class="today-btn-sm" onclick="document.getElementById('qaDate').value=toDateStr(new Date())">Сегодня</button>
+      </div>
+      <div class="vol-label">Объём</div>
+      <div class="vol-grid" id="qaVolPresets"></div>
+      <div class="vol-custom">
+        <input type="number" id="qaCustomVol" placeholder="Другой объём" min="1" max="9999" oninput="onQaCustomVol()">
+        <div class="unit-toggle">
+          <button class="unit-btn active" onclick="setQaUnit('мл',this)">мл</button>
+          <button class="unit-btn" onclick="setQaUnit('сл',this)">сл</button>
+          <button class="unit-btn" onclick="setQaUnit('л',this)">л</button>
+        </div>
+      </div>
+    </div>
+    <button class="confirm-btn" id="qaConfirmBtn" onclick="confirmQuickAdd()" disabled>Добавить</button>
+  </div>
+</div>
 
-    <div class="input-group">
-      <div class="input-label">Название</div>
-      <input class="input-field" id="newDrinkName" type="text" placeholder="Например: Пиво IPA">
+<!-- DRINK EDIT MODAL -->
+<div class="modal-overlay" id="drinkModal" onclick="handleOverlay(event,'drinkModal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('drinkModal')">✕</button>
+    <div class="modal-title" id="drinkModalTitle">Новый напиток</div>
+    <div class="input-group" style="margin-top:4px">
+      <div class="input-label" id="lbl-cat">Категория</div>
+      <select class="input-field" id="drinkCat" style="appearance:auto"></select>
+    </div>
+    <div class="input-group"><div class="input-label" id="lbl-dname">Название</div><input class="input-field" id="dName" type="text" placeholder="Напр.: Jever Pils"></div>
+    <div class="input-row">
+      <div class="input-group"><div class="input-label">Алкоголь %</div><input class="input-field" id="dAbv" type="number" step="0.1" min="0" placeholder="5.0"></div>
+      <div class="input-group"><div class="input-label">Ккал/100мл</div><input class="input-field" id="dKcal" type="number" step="1" placeholder="43"></div>
+    </div>
+    <div class="input-row">
+      <div class="input-group"><div class="input-label">Углев. г</div><input class="input-field" id="dCarbs" type="number" step="0.1" placeholder="3.5"></div>
+      <div class="input-group"><div class="input-label">из них сахара</div><input class="input-field" id="dSugar" type="number" step="0.1" placeholder="0.5"></div>
+    </div>
+    <div class="input-row">
+      <div class="input-group"><div class="input-label">Белки г</div><input class="input-field" id="dProtein" type="number" step="0.1" placeholder="0.4"></div>
+      <div class="input-group"><div class="input-label">Жиры г</div><input class="input-field" id="dFat" type="number" step="0.1" placeholder="0"></div>
+    </div>
+    <div class="input-row">
+      <div class="input-group"><div class="input-label">Нас. жиры г</div><input class="input-field" id="dFatSat" type="number" step="0.1" placeholder="0"></div>
+      <div class="input-group"></div>
     </div>
     <div class="input-group">
-      <div class="input-label">Крепость (% алкоголя)</div>
-      <input class="input-field" id="newDrinkAbv" type="number" step="0.1" min="0" max="100" placeholder="0.0">
-    </div>
-    <div class="input-group">
-      <div class="input-label">Иконка</div>
+      <div class="input-label" id="lbl-icon">Иконка</div>
       <div class="emoji-grid" id="emojiGrid"></div>
     </div>
-
-    <button class="confirm-btn" onclick="confirmAddDrink()" style="margin-top:8px">Добавить</button>
+    <button class="confirm-btn" onclick="confirmDrink()" style="margin-top:8px" id="lbl-save">Сохранить</button>
     <div style="height:8px"></div>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+<!-- FAVS MODAL -->
+<div class="modal-overlay" id="favsModal" onclick="handleOverlay(event,'favsModal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('favsModal')">✕</button>
+    <div class="modal-title">Любимые напитки</div>
+    <div class="modal-sub">Выбери до 5 напитков для быстрого доступа</div>
+    <div id="favsSelectList" style="padding:0 20px 20px"></div>
+  </div>
+</div>
 
+<!-- YEAR PICKER MODAL -->
+<div class="modal-overlay" id="yearModal" onclick="handleOverlay(event,'yearModal')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('yearModal')">✕</button>
+    <div class="modal-title">Выбери год</div>
+    <div class="year-grid" id="yearGrid" style="margin-top:16px"></div>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirmTitle">Удалить?</div>
+    <div class="confirm-msg" id="confirmMsg"></div>
+    <div class="confirm-btns">
+      <button class="confirm-no" onclick="closeConfirm()">Отмена</button>
+      <button class="confirm-yes" id="confirmYesBtn">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 <input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)">
 
 <script>
-// ====== DATA ======
-const DEFAULT_DRINKS = [
-  { id: 1, name: 'Пиво', icon: '🍺', abv: 5.0 },
-  { id: 2, name: 'Светлое', icon: '🍻', abv: 4.5 },
-  { id: 3, name: 'Вино красное', icon: '🍷', abv: 13.0 },
-  { id: 4, name: 'Вино белое', icon: '🥂', abv: 11.5 },
-  { id: 5, name: 'Водка', icon: '🥃', abv: 40.0 },
-  { id: 6, name: 'Виски', icon: '🥃', abv: 40.0 },
-  { id: 7, name: 'Джин', icon: '🍸', abv: 40.0 },
-  { id: 8, name: 'Ром', icon: '🍹', abv: 40.0 },
-  { id: 9, name: 'Шампанское', icon: '🍾', abv: 12.0 },
-  { id: 10, name: 'Лонгдринк', icon: '🧉', abv: 6.0 },
-  { id: 11, name: 'Коктейль', icon: '🍹', abv: 10.0 },
-  { id: 12, name: 'Пиво безалк.', icon: '🫗', abv: 0.5 },
+// ====== DATA STRUCTURE ======
+// GROUPS — локализованные через функцию
+const GROUPS_DATA=[
+  {id:'beer',names:{ru:'Пиво',de:'Bier',en:'Beer'},icon:'🍺',sub:[
+    {id:'beer_alc',names:{ru:'Алкогольное',de:'Alkoholisch',en:'Alcoholic'},icon:'🍺'},
+    {id:'beer_free',names:{ru:'Безалкогольное',de:'Alkoholfrei',en:'Non-alcoholic'},icon:'🫗'},
+    {id:'beer_mix',names:{ru:'Микс / Радлер',de:'Mix / Radler',en:'Mix / Radler'},icon:'🍋'},
+  ]},
+  {id:'wine',names:{ru:'Вино',de:'Wein',en:'Wine'},icon:'🍷',sub:[
+    {id:'wine_red',names:{ru:'Красное',de:'Rotwein',en:'Red wine'},icon:'🍷'},
+    {id:'wine_white',names:{ru:'Белое',de:'Weißwein',en:'White wine'},icon:'🥂'},
+    {id:'wine_rose',names:{ru:'Розе',de:'Roséwein',en:'Rosé'},icon:'🌸'},
+    {id:'wine_spark',names:{ru:'Игристое',de:'Sekt / Prosecco',en:'Sparkling'},icon:'🍾'},
+    {id:'wine_verde',names:{ru:'Vinho Verde',de:'Vinho Verde',en:'Vinho Verde'},icon:'🍃'},
+    {id:'wine_fort',names:{ru:'Портвейн / Крепл.',de:'Portwein / Likörwein',en:'Port / Fortified'},icon:'🫙'},
+  ]},
+  {id:'spirits',names:{ru:'Крепкие',de:'Spirituosen',en:'Spirits'},icon:'🥃',sub:[
+    {id:'spirits_vodka',names:{ru:'Водка',de:'Vodka',en:'Vodka'},icon:'🥃'},
+    {id:'spirits_whisky',names:{ru:'Виски / Бурбон',de:'Whisky / Bourbon',en:'Whisky / Bourbon'},icon:'🥃'},
+    {id:'spirits_gin',names:{ru:'Джин',de:'Gin',en:'Gin'},icon:'🍸'},
+    {id:'spirits_rum',names:{ru:'Ром',de:'Rum',en:'Rum'},icon:'🏝'},
+    {id:'spirits_cognac',names:{ru:'Коньяк / Бренди',de:'Cognac / Brandy',en:'Cognac / Brandy'},icon:'🥃'},
+    {id:'spirits_other',names:{ru:'Другое',de:'Sonstiges',en:'Other'},icon:'🍶'},
+  ]},
+  {id:'cocktail',names:{ru:'Коктейли',de:'Cocktails',en:'Cocktails'},icon:'🍹',sub:[
+    {id:'cocktail_long',names:{ru:'Лонгдринки',de:'Longdrinks',en:'Longdrinks'},icon:'🧉'},
+    {id:'cocktail_mix',names:{ru:'Коктейли',de:'Cocktails',en:'Cocktails'},icon:'🍹'},
+  ]},
 ];
 
-const VOL_PRESETS_ML = [100, 200, 300, 330, 500, 1000];
-const EMOJIS = ['🍺','🍻','🥂','🍷','🥃','🍸','🍹','🍾','🧉','🫗','🧊','🍵'];
-
-let state = {
-  drinks: [],
-  logs: [],
-  unit: 'мл',
-  selectedDrink: null,
-  selectedVol: null,
-  newDrinkEmoji: '🍺',
-  statTab: 'week'
+// Локализованные имена напитков базы
+const DRINK_NAMES={
+  ru:{19:'Вино красное сухое',20:'Вино белое сухое',27:'Вино розе',24:'Просекко / Кава',29:'Портвейн',21:'Водка',22:'Виски',30:'Бурбон',25:'Джин',26:'Ром',31:'Коньяк',32:'Бренди',33:'Лонгдринк',23:'Коктейль'},
+  de:{19:'Rotwein trocken',20:'Weißwein trocken',27:'Roséwein',24:'Prosecco / Cava',29:'Portwein',21:'Vodka',22:'Whisky',30:'Bourbon',25:'Gin',26:'Rum',31:'Cognac',32:'Brandy',33:'Longdrink',23:'Cocktail'},
+  en:{19:'Red wine dry',20:'White wine dry',27:'Rosé wine',24:'Prosecco / Cava',29:'Port wine',21:'Vodka',22:'Whisky',30:'Bourbon',25:'Gin',26:'Rum',31:'Cognac',32:'Brandy',33:'Longdrink',23:'Cocktail'},
 };
 
-function load() {
-  const d = localStorage.getItem('ll_drinks');
-  const l = localStorage.getItem('ll_logs');
-  state.drinks = d ? JSON.parse(d) : JSON.parse(JSON.stringify(DEFAULT_DRINKS));
-  state.logs = l ? JSON.parse(l) : [];
+function getGroups(){
+  const lang=S.lang||'ru';
+  return GROUPS_DATA.map(g=>({
+    ...g,
+    name:g.names[lang]||g.names.ru,
+    sub:g.sub.map(s=>({...s,name:s.names[lang]||s.names.ru}))
+  }));
 }
-function save() {
-  localStorage.setItem('ll_drinks', JSON.stringify(state.drinks));
-  localStorage.setItem('ll_logs', JSON.stringify(state.logs));
+function getCats(){return getGroups().flatMap(g=>g.sub);}
+function getDrinkName(drink){
+  const lang=S.lang||'ru';
+  if(DRINK_NAMES[lang]&&DRINK_NAMES[lang][drink.id])return DRINK_NAMES[lang][drink.id];
+  return drink.name;
 }
 
-// ====== SCREEN ======
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-  document.getElementById('nav-' + name)?.classList.add('active');
-  if (name === 'home') renderHome();
-  if (name === 'stats') renderStats();
-  if (name === 'drinks') renderDrinks();
-  document.getElementById('content').scrollTop = 0;
+const DEFAULT_DRINKS=[
+  {id:1, name:'Jever Pils',          icon:'🍺',cat:'beer_alc', abv:4.9,kcal:39, carbs:2.0,sugar:0.1,protein:0.4,fat:0.01,fatSat:0.01},
+  {id:2, name:'Jever Light',         icon:'🍺',cat:'beer_alc', abv:2.7,kcal:25, carbs:2.8,sugar:0.1,protein:0.3,fat:0.01,fatSat:0.01},
+  {id:4, name:'Erdinger Hefeweizen', icon:'🍻',cat:'beer_alc', abv:5.3,kcal:44, carbs:2.6,sugar:0.1,protein:0.6,fat:0.1, fatSat:0.1},
+  {id:5, name:'Erdinger Dunkel',     icon:'🍻',cat:'beer_alc', abv:5.6,kcal:48, carbs:4.4,sugar:0.1,protein:0.6,fat:0.1, fatSat:0.1},
+  {id:6, name:'Franziskaner Hefe',   icon:'🍻',cat:'beer_alc', abv:5.0,kcal:43, carbs:2.6,sugar:0.2,protein:0.78,fat:0.1,fatSat:0.1},
+  {id:7, name:'Franziskaner Dunkel', icon:'🍻',cat:'beer_alc', abv:5.0,kcal:47, carbs:5.0,sugar:0.2,protein:0.6,fat:0.1, fatSat:0.1},
+  {id:9, name:'Paulaner Hefeweizen', icon:'🍻',cat:'beer_alc', abv:5.5,kcal:47, carbs:4.9,sugar:2.1,protein:0.5,fat:0,   fatSat:0},
+  {id:10,name:'Augustiner Helles',   icon:'🍺',cat:'beer_alc', abv:5.2,kcal:43, carbs:3.2,sugar:0,  protein:0.5,fat:0.5, fatSat:0.1},
+  {id:11,name:"Maisel's Weisse",     icon:'🍻',cat:'beer_alc', abv:5.2,kcal:45, carbs:4.3,sugar:0.1,protein:0.5,fat:0.1, fatSat:0.1},
+  {id:12,name:'Astra Kiezmische',    icon:'🍺',cat:'beer_alc', abv:5.0,kcal:42, carbs:3.0,sugar:0.1,protein:0.4,fat:0.01,fatSat:0.01},
+  {id:13,name:'Flensburger Pils',    icon:'🍺',cat:'beer_alc', abv:4.8,kcal:41, carbs:2.8,sugar:0.1,protein:0.4,fat:0.01,fatSat:0.01},
+  {id:16,name:'Heineken Original',   icon:'🍺',cat:'beer_alc', abv:5.0,kcal:42, carbs:3.2,sugar:0.1,protein:0.4,fat:0,   fatSat:0},
+  {id:18,name:'Guinness Extra Stout',icon:'🍺',cat:'beer_alc', abv:5.6,kcal:45, carbs:3.8,sugar:0.2,protein:0.5,fat:0,   fatSat:0},
+  {id:3, name:'Jever Fun',           icon:'🫗',cat:'beer_free', abv:0.5,kcal:15, carbs:1.8,sugar:0,  protein:0.4,fat:0,   fatSat:0},
+  {id:8, name:'Franziskaner Alk.frei',icon:'🫗',cat:'beer_free',abv:0.5,kcal:25, carbs:1.9,sugar:0.1,protein:0.3,fat:0.1,fatSat:0.1},
+  {id:14,name:'Flensburger Frei',    icon:'🫗',cat:'beer_free', abv:0.5,kcal:21, carbs:4.5,sugar:0.1,protein:0.4,fat:0,   fatSat:0},
+  {id:17,name:'Heineken 0.0',        icon:'🫗',cat:'beer_free', abv:0.0,kcal:21, carbs:4.8,sugar:0.1,protein:0.3,fat:0,   fatSat:0},
+  {id:15,name:'Flensburger Radler',  icon:'🍋',cat:'beer_mix',  abv:2.5,kcal:32, carbs:6.5,sugar:5.5,protein:0.2,fat:0,   fatSat:0},
+  {id:19,name:'Вино красное сухое',  icon:'🍷',cat:'wine_red',  abv:13.0,kcal:85,carbs:2.6,sugar:0.6,protein:0.1,fat:0,   fatSat:0},
+  {id:20,name:'Вино белое сухое',    icon:'🥂',cat:'wine_white', abv:11.5,kcal:77,carbs:2.3,sugar:0.6,protein:0.1,fat:0,   fatSat:0},
+  {id:27,name:'Вино розе',           icon:'🌸',cat:'wine_rose',  abv:12.0,kcal:83,carbs:3.0,sugar:1.5,protein:0.1,fat:0,   fatSat:0},
+  {id:24,name:'Просекко / Кава',     icon:'🍾',cat:'wine_spark', abv:11.0,kcal:70,carbs:4.0,sugar:3.0,protein:0.3,fat:0,   fatSat:0},
+  {id:28,name:'Vinho Verde',         icon:'🍃',cat:'wine_verde', abv:9.5, kcal:62,carbs:3.5,sugar:1.5,protein:0.1,fat:0,   fatSat:0},
+  {id:29,name:'Портвейн',            icon:'🫙',cat:'wine_fort',  abv:19.0,kcal:157,carbs:12.0,sugar:12.0,protein:0.1,fat:0,fatSat:0},
+  {id:21,name:'Водка',               icon:'🥃',cat:'spirits_vodka',  abv:40.0,kcal:231,carbs:0,sugar:0,protein:0,fat:0,fatSat:0},
+  {id:22,name:'Виски',               icon:'🥃',cat:'spirits_whisky', abv:40.0,kcal:250,carbs:0,sugar:0,protein:0,fat:0,fatSat:0},
+  {id:30,name:'Бурбон',              icon:'🥃',cat:'spirits_whisky', abv:40.0,kcal:250,carbs:0,sugar:0,protein:0,fat:0,fatSat:0},
+  {id:25,name:'Джин',                icon:'🍸',cat:'spirits_gin',    abv:40.0,kcal:231,carbs:0,sugar:0,protein:0,fat:0,fatSat:0},
+  {id:26,name:'Ром',                 icon:'🏝', cat:'spirits_rum',    abv:40.0,kcal:231,carbs:0,sugar:0,protein:0,fat:0,fatSat:0},
+  {id:31,name:'Коньяк',              icon:'🥃',cat:'spirits_cognac', abv:40.0,kcal:245,carbs:0,sugar:0,protein:0,fat:0,fatSat:0},
+  {id:32,name:'Бренди',              icon:'🥃',cat:'spirits_cognac', abv:38.0,kcal:230,carbs:0,sugar:0,protein:0,fat:0,fatSat:0},
+  {id:33,name:'Лонгдринк',           icon:'🧉',cat:'cocktail_long',  abv:5.0,kcal:45,carbs:8.0,sugar:7.0,protein:0,fat:0,fatSat:0},
+  {id:23,name:'Коктейль',            icon:'🍹',cat:'cocktail_mix',   abv:8.0,kcal:65,carbs:7.0,sugar:5.0,protein:0,fat:0,fatSat:0},
+];
+
+const VOL_PRESETS=[200,330,500,1000];
+const VOL_LABELS={200:'200мл',330:'🍺 0.33',500:'🍺 0.5л',1000:'1 литр'};
+const EMOJIS=['🍺','🍻','🥂','🍷','🥃','🍸','🍹','🍾','🧉','🫗','🌸','🍃','🏝','🫙','🍶','🧊'];
+const VOZ_LIMIT=24;
+
+let S={
+  drinks:[],logs:[],unit:'мл',lang:'ru',
+  favs:[],
+  selDrink:null,selVol:null,selEmoji:'🍺',
+  qaUnit:'мл',qaVol:null,qaDrinkId:null,qaDate:null,
+  editDrinkId:null,
+  statTab:'week',chartType:'bar',
+  calYear:new Date().getFullYear(),calMonth:new Date().getMonth(),calDay:null,
+  drinksLevel:0,drinksGroup:null,drinksCat:null,
+  addLevel:0,addGroup:null,addCat:null,
+  confirmCb:null,
+};
+
+function load(){
+  const d=localStorage.getItem('ll_d3'),l=localStorage.getItem('ll_logs'),f=localStorage.getItem('ll_favs');
+  S.drinks=d?JSON.parse(d):JSON.parse(JSON.stringify(DEFAULT_DRINKS));
+  S.logs=l?JSON.parse(l):[];
+  S.favs=f?JSON.parse(f):[];
+  S.lang=localStorage.getItem('ll_lang')||'ru';
+}
+function save(){
+  localStorage.setItem('ll_d3',JSON.stringify(S.drinks));
+  localStorage.setItem('ll_logs',JSON.stringify(S.logs));
+  localStorage.setItem('ll_favs',JSON.stringify(S.favs));
+}
+
+const LANGS={
+  ru:{
+    home:'Обзор',stats:'Статистика',calendar:'Календарь',drinks:'Напитки',settings:'Настройки',
+    add:'Добавить напиток',today:'Сегодня',recent:'Последние записи',
+    week:'Неделя',month:'Месяц',year:'Год',all:'Всё',
+    favs:'Быстрый выбор',name:'Русский',
+    patterns:'Твои паттерны',avgPerDay:'Среднее в день',
+    allTime:'За всё время',totalKcal:'Всего ккал',soberDays:'Безалкогольные дни',
+    loggedDays:'Дней с записями',withAlc:'Дней с алк.',
+    volume:'Объём',date:'Дата',
+    drinkRemoved:'Напиток удалён',logAdded:'✓ Запись добавлена',saved:'✓ Сохранено',
+    confirmDelDrink:'Удалить напиток?',confirmDelLog:'Удалить запись?',
+    cantDelete:'⚠ Напиток есть в записях',
+    dbReset:'✓ База сброшена',exported:'✓ Экспортировано',imported:'✓ Импортировано',
+    personal:'Личная норма',who:'Норма ВОЗ',
+    g:'г',ml:'мл',kcal:'ккал',alc:'г алк.',drinks2:'напитков',
+    langLabel:'Язык интерфейса',
+    favsLabel:'Любимые напитки',favsDesc:'Быстрый доступ (до 5)',favsHint:'Выбери любимые напитки',
+    dataSection:'Данные',dbSection:'База напитков',dangerSection:'Опасная зона',
+    exportLabel:'Экспорт данных',importLabel:'Импорт данных',
+    resetDb:'Сброс до заводских',resetDbSub:'Восстановить оригинальную базу',
+    clearLabel:'Очистить записи',clearSub:'База напитков сохранится',
+    todayLabel:'Сегодня',
+    catChoose:'Выбери категорию',typeChoose:'Выбери тип',drinkChoose:'Выбери напиток',
+    noDrinks:'Нет напитков',addDrink:'Добавить напиток',
+    newDrink:'Новый напиток',editDrink:'Редактировать',
+    catLabel:'Категория',nameLabel:'Название',iconLabel:'Иконка',saveLabel:'Сохранить',
+    enterName:'Введи название',
+    confirmDel:'Удалить',cancel:'Отмена',
+    resetOne:'↺ Сброс к заводским',
+    noFuture:'Нельзя вносить в будущее',
+    soberDay:'День без алкоголя',
+    favsChoose:'Выбери до 5 напитков для быстрого доступа',
+    yearChoose:'Выбери год',
+    maxFavs:'Максимум 5',
+    top:'Топ напитки',
+  },
+  de:{
+    home:'Übersicht',stats:'Statistik',calendar:'Kalender',drinks:'Getränke',settings:'Einstellungen',
+    add:'Getränk hinzufügen',today:'Heute',recent:'Letzte Einträge',
+    week:'Woche',month:'Monat',year:'Jahr',all:'Gesamt',
+    favs:'Schnellauswahl',name:'Deutsch',
+    patterns:'Deine Muster',avgPerDay:'Ø pro Tag',
+    allTime:'Gesamtzeitraum',totalKcal:'Kalorien gesamt',soberDays:'Alkoholfreie Tage',
+    loggedDays:'Protokollierte Tage',withAlc:'Tage mit Alkohol',
+    volume:'Menge',date:'Datum',
+    drinkRemoved:'Getränk gelöscht',logAdded:'✓ Eintrag hinzugefügt',saved:'✓ Gespeichert',
+    confirmDelDrink:'Getränk löschen?',confirmDelLog:'Eintrag löschen?',
+    cantDelete:'⚠ Getränk wird verwendet',
+    dbReset:'✓ Zurückgesetzt',exported:'✓ Exportiert',imported:'✓ Importiert',
+    personal:'Persönlicher Grenzwert',who:'Offizieller Grenzwert',
+    g:'g',ml:'ml',kcal:'kcal',alc:'g Alk.',drinks2:'Getränke',
+    langLabel:'Sprache',
+    favsLabel:'Lieblingsgetränke',favsDesc:'Schnellzugriff (max. 5)',favsHint:'Lieblingsgetränke wählen',
+    dataSection:'Daten',dbSection:'Getränkedatenbank',dangerSection:'Gefahrenzone',
+    exportLabel:'Daten exportieren',importLabel:'Daten importieren',
+    resetDb:'Auf Standard zurücksetzen',resetDbSub:'Originaldatenbank wiederherstellen',
+    clearLabel:'Einträge löschen',clearSub:'Getränkedatenbank bleibt erhalten',
+    todayLabel:'Heute',
+    catChoose:'Kategorie wählen',typeChoose:'Typ wählen',drinkChoose:'Getränk wählen',
+    noDrinks:'Keine Getränke',addDrink:'Getränk hinzufügen',
+    newDrink:'Neues Getränk',editDrink:'Bearbeiten',
+    catLabel:'Kategorie',nameLabel:'Name',iconLabel:'Symbol',saveLabel:'Speichern',
+    enterName:'Name eingeben',
+    confirmDel:'Löschen',cancel:'Abbrechen',
+    resetOne:'↺ Zurücksetzen',
+    noFuture:'Kein Datum in der Zukunft',
+    soberDay:'Alkoholfreier Tag',
+    favsChoose:'Bis zu 5 Lieblingsgetränke wählen',
+    yearChoose:'Jahr wählen',
+    maxFavs:'Maximum 5',
+    top:'Top Getränke',
+  },
+  en:{
+    home:'Overview',stats:'Statistics',calendar:'Calendar',drinks:'Drinks',settings:'Settings',
+    add:'Add drink',today:'Today',recent:'Recent entries',
+    week:'Week',month:'Month',year:'Year',all:'All',
+    favs:'Quick access',name:'English',
+    patterns:'Your patterns',avgPerDay:'Daily average',
+    allTime:'All time',totalKcal:'Total kcal',soberDays:'Alcohol-free days',
+    loggedDays:'Logged days',withAlc:'Days with alcohol',
+    volume:'Volume',date:'Date',
+    drinkRemoved:'Drink deleted',logAdded:'✓ Entry added',saved:'✓ Saved',
+    confirmDelDrink:'Delete drink?',confirmDelLog:'Delete entry?',
+    cantDelete:'⚠ Drink is used in entries',
+    dbReset:'✓ Reset done',exported:'✓ Exported',imported:'✓ Imported',
+    personal:'Personal limit',who:'WHO guideline',
+    g:'g',ml:'ml',kcal:'kcal',alc:'g alc.',drinks2:'drinks',
+    langLabel:'Interface language',
+    favsLabel:'Favourite drinks',favsDesc:'Quick access (up to 5)',favsHint:'Choose your favourites',
+    dataSection:'Data',dbSection:'Drink database',dangerSection:'Danger zone',
+    exportLabel:'Export data',importLabel:'Import data',
+    resetDb:'Reset to defaults',resetDbSub:'Restore original database',
+    clearLabel:'Clear entries',clearSub:'Drink database will be kept',
+    todayLabel:'Today',
+    catChoose:'Choose category',typeChoose:'Choose type',drinkChoose:'Choose drink',
+    noDrinks:'No drinks',addDrink:'Add drink',
+    newDrink:'New drink',editDrink:'Edit',
+    catLabel:'Category',nameLabel:'Name',iconLabel:'Icon',saveLabel:'Save',
+    enterName:'Enter name',
+    confirmDel:'Delete',cancel:'Cancel',
+    resetOne:'↺ Reset to default',
+    noFuture:'No future dates allowed',
+    soberDay:'Alcohol-free day',
+    favsChoose:'Choose up to 5 favourite drinks',
+    yearChoose:'Choose year',
+    maxFavs:'Maximum 5',
+    top:'Top drinks',
+  },
+};
+function L(key){return(LANGS[S.lang]||LANGS.ru)[key]||key;}
+
+function setLang(lang){
+  S.lang=lang;localStorage.setItem('ll_lang',lang);
+  applyLang();
+  showToast('✓ '+L('name'));
+}
+function applyLang(){
+  const lang=S.lang;
+  // Nav
+  document.getElementById('nav-lbl-home').textContent=L('home');
+  document.getElementById('nav-lbl-stats').textContent=L('stats');
+  document.getElementById('nav-lbl-cal').textContent=L('calendar');
+  document.getElementById('nav-lbl-drinks').textContent=L('drinks');
+  document.getElementById('nav-lbl-settings').textContent=L('settings');
+  // Stat tabs
+  document.getElementById('tab-week').textContent=L('week');
+  document.getElementById('tab-month').textContent=L('month');
+  document.getElementById('tab-year').textContent=L('year');
+  document.getElementById('tab-all').textContent=L('all');
+  // Add btn
+  document.getElementById('lbl-add').textContent=L('add');
+  // Home labels
+  document.getElementById('lbl-today').textContent=L('todayLabel');
+  document.getElementById('lbl-drinks').textContent=L('drinks2');
+  document.getElementById('lbl-alc').textContent=L('alc');
+  // Settings
+  document.getElementById('langSub').textContent=L('name');
+  ['ru','de','en'].forEach(l=>{const btn=document.getElementById('lang'+l.toUpperCase());if(btn)btn.style.opacity=l===lang?'1':'.4';});
+  const settingsIds={
+    'lbl-lang':'langLabel','lbl-favs-settings':'favsLabel',
+    'lbl-favs-desc':'favsDesc','lbl-favs-hint':'favsHint',
+    'lbl-data-section':'dataSection','lbl-db-section':'dbSection',
+    'lbl-danger':'dangerSection','lbl-export':'exportLabel',
+    'lbl-import':'importLabel','lbl-reset-db':'resetDb',
+    'lbl-reset-db-sub':'resetDbSub','lbl-clear':'clearLabel',
+    'lbl-clear-sub':'clearSub',
+    'lbl-stats-title':'stats','lbl-stats-sub':'patterns',
+    'lbl-cal-title':'calendar',
+  };
+  Object.entries(settingsIds).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.textContent=L(key);});
+  // Confirm dialog buttons
+  document.getElementById('confirmYesBtn').textContent=L('confirmDel');
+  document.querySelectorAll('.confirm-no').forEach(b=>b.textContent=L('cancel'));
+  // Groups rename
+  updateGroupNames();
+  // Re-render active screen
+  const active=document.querySelector('.screen.active');
+  if(active){
+    if(active.id==='screen-home')renderHome();
+    if(active.id==='screen-stats')renderStats();
+    if(active.id==='screen-calendar')renderCalendar();
+    if(active.id==='screen-drinks')renderDrinks();
+  }
+}
+function updateGroupNames(){
+  // Now handled by getGroups() dynamically - no static mutation needed
+}
+
+// ====== SCREEN NAV ======
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('screen-'+name)?.classList.add('active');
+  document.getElementById('nav-'+name)?.classList.add('active');
+  document.getElementById('topbarBack').classList.remove('visible');
+  if(name==='home'){renderHome();}
+  if(name==='stats'){renderStats();}
+  if(name==='calendar'){renderCalendar();}
+  if(name==='drinks'){S.drinksLevel=0;renderDrinks();}
+  document.getElementById('content').scrollTop=0;
+}
+function handleBack(){
+  const active=document.querySelector('.screen.active');
+  if(active?.id==='screen-drinks'){
+    if(S.drinksLevel===2){S.drinksLevel=1;renderDrinks();}
+    else if(S.drinksLevel===1){S.drinksLevel=0;renderDrinks();}
+  }
 }
 
 // ====== HOME ======
-function renderHome() {
-  const now = new Date();
-  const days = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
-  const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-  document.getElementById('homeDate').textContent = days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()];
-
-  const h = now.getHours();
-  let greeting = h < 6 ? 'Доброй ночи 🌙' : h < 12 ? 'Доброе утро ☀️' : h < 18 ? 'Добрый день 👋' : 'Добрый вечер 🌆';
-  document.getElementById('homeGreeting').textContent = greeting;
-
-  const todayStr = toDateStr(now);
-  const todayLogs = state.logs.filter(l => l.date === todayStr);
-  const totalVol = todayLogs.reduce((a, l) => a + l.vol, 0);
-  const totalAlc = todayLogs.reduce((a, l) => {
-    const d = state.drinks.find(d => d.id === l.drinkId);
-    return a + (d ? l.vol * d.abv / 100 * 0.789 : 0);
-  }, 0);
-
-  document.getElementById('todayDrinks').textContent = todayLogs.length;
-  document.getElementById('todayVol').textContent = totalVol;
-  document.getElementById('todayAlc').textContent = totalAlc.toFixed(1);
-
+function renderHome(){
+  const now=new Date();
+  const DAYS_RU=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+  const DAYS_DE=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  const DAYS_EN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTHS_RU=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  const MONTHS_DE=['Jan.','Feb.','März','Apr.','Mai','Juni','Juli','Aug.','Sept.','Okt.','Nov.','Dez.'];
+  const MONTHS_EN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let dateStr='';
+  if(S.lang==='de') dateStr=DAYS_DE[now.getDay()]+', '+now.getDate()+'. '+MONTHS_DE[now.getMonth()];
+  else if(S.lang==='en') dateStr=DAYS_EN[now.getDay()]+', '+MONTHS_EN[now.getMonth()]+' '+now.getDate();
+  else dateStr=DAYS_RU[now.getDay()]+', '+now.getDate()+' '+MONTHS_RU[now.getMonth()];
+  document.getElementById('homeDate').textContent=dateStr;
+  const h=now.getHours();
+  const greetings={ru:h<6?'Доброй ночи 🌙':h<12?'Доброе утро ☀️':h<18?'Добрый день 👋':'Добрый вечер 🌆',
+    de:h<6?'Gute Nacht 🌙':h<12?'Guten Morgen ☀️':h<18?'Guten Tag 👋':'Guten Abend 🌆',
+    en:h<6?'Good night 🌙':h<12?'Good morning ☀️':h<18?'Good afternoon 👋':'Good evening 🌆'};
+  document.getElementById('homeGreeting').textContent=(greetings[S.lang]||greetings.ru);
+  const td=toDateStr(now),tl=S.logs.filter(l=>l.date===td);
+  const tvol=tl.reduce((a,l)=>a+toMl(l),0);
+  const talc=tl.reduce((a,l)=>{const d=getDrink(l.drinkId);return a+(d?toMl(l)*d.abv/100*.789:0);},0);
+  const tkcal=tl.reduce((a,l)=>{const d=getDrink(l.drinkId);return a+(d?toMl(l)*(d.kcal||0)/100:0);},0);
+  document.getElementById('tDrinks').textContent=tl.length;
+  document.getElementById('tVol').textContent=Math.round(tvol);
+  document.getElementById('tAlc').textContent=talc.toFixed(1);
+  document.getElementById('tKcal').textContent=Math.round(tkcal);
+  // Favs
+  renderFavsRow();
   // Recent
-  const list = document.getElementById('recentList');
-  const recent = [...state.logs].sort((a,b) => b.ts - a.ts).slice(0, 10);
-  if (!recent.length) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🫗</div><div class="empty-state-text">Записей пока нет.<br>Нажми «Добавить напиток»!</div></div>';
-    return;
-  }
-  list.innerHTML = recent.map(log => {
-    const drink = state.drinks.find(d => d.id === log.drinkId);
-    if (!drink) return '';
-    const t = new Date(log.ts);
-    const timeStr = t.toLocaleTimeString('ru', {hour:'2-digit',minute:'2-digit'});
-    const dateStr = log.date === todayStr ? 'Сегодня' : log.date;
-    const volStr = log.unit === 'сл' ? log.vol + ' сл' : log.vol + ' мл';
-    return `<div class="log-item">
-      <div class="log-item-icon">${drink.icon}</div>
-      <div class="log-item-info">
-        <div class="log-item-name">${drink.name}</div>
-        <div class="log-item-meta">${drink.abv}% алк · ${dateStr}</div>
-      </div>
-      <div class="log-item-right">
-        <div class="log-item-vol">${volStr}</div>
-        <div class="log-item-time">${timeStr}</div>
-      </div>
-      <button class="log-item-del" onclick="deleteLog(${log.ts})">✕</button>
-    </div>`;
+  const list=document.getElementById('recentList');
+  document.getElementById('lbl-recent').textContent=L('recent');
+  const recent=[...S.logs].sort((a,b)=>b.ts-a.ts).slice(0,10);
+  if(!recent.length){list.innerHTML=`<div class="empty"><div class="empty-icon">🫗</div><div class="empty-text">${S.lang==='de'?'Noch keine Einträge':S.lang==='en'?'No entries yet. Tap Add!':'Записей пока нет. Нажми «Добавить»!'}</div></div>`;return;}
+  list.innerHTML=recent.map(log=>{
+    const d=getDrink(log.drinkId);if(!d)return'';
+    const t=new Date(log.ts),ts=t.toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'});
+    const ml=toMl(log),vs=log.vol+(log.unit||'мл');
+    const kcStr=d.kcal?Math.round(ml*d.kcal/100)+' '+L('kcal')+' · ':'';
+    return`<div class="log-item"><div class="log-icon">${d.icon}</div><div class="log-info"><div class="log-name">${getDrinkName(d)}</div><div class="log-meta">${d.abv}% · ${kcStr}${log.date===td?L('today'):log.date}</div></div><div class="log-right"><div class="log-vol">${vs}</div><div class="log-time">${ts}</div></div><button class="log-del" onclick="delLogConfirm(${log.ts})">✕</button></div>`;
   }).join('');
 }
 
-function deleteLog(ts) {
-  state.logs = state.logs.filter(l => l.ts !== ts);
-  save(); renderHome();
-  showToast('Запись удалена');
+function delLogConfirm(ts){
+  showConfirm(L('confirmDelLog'),'',()=>{S.logs=S.logs.filter(l=>l.ts!==ts);save();renderHome();showToast(L('drinkRemoved'));});
 }
 
-// ====== MODAL ======
-function openAddModal() {
-  state.selectedDrink = null;
-  state.selectedVol = null;
-  document.getElementById('customVol').value = '';
-  document.getElementById('confirmBtn').disabled = true;
+// ====== FAVS ======
+function renderFavsRow(){
+  const sec=document.getElementById('favsSection');
+  const list=document.getElementById('favsList');
+  if(!S.favs.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  document.getElementById('lbl-favs').textContent=L('favs');
+  list.innerHTML=S.favs.map(id=>{
+    const d=getDrink(id);if(!d)return'';
+    return`<div class="fav-btn" onclick="openQuickAdd(${id},null)"><div class="fav-btn-icon">${d.icon}</div><div class="fav-btn-name">${getDrinkName(d)}</div></div>`;
+  }).join('');
+}
 
-  // Drink grid
-  const grid = document.getElementById('modalDrinkGrid');
-  grid.innerHTML = state.drinks.map(d =>
-    `<div class="drink-card" onclick="selectDrink(${d.id},this)">
-      <div class="drink-card-icon">${d.icon}</div>
-      <div class="drink-card-name">${d.name}</div>
-      <div class="drink-card-abv">${d.abv}%</div>
-    </div>`
-  ).join('');
+function openFavsModal(){
+  document.querySelector('#favsModal .modal-sub').textContent=L('favsChoose');
+  const list=document.getElementById('favsSelectList');
+  list.innerHTML=S.drinks.map(d=>{
+    const sel=S.favs.includes(d.id);
+    return`<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer" onclick="toggleFav(${d.id},this)">
+      <div style="font-size:24px">${d.icon}</div>
+      <div style="flex:1;font-size:14px;font-weight:600">${getDrinkName(d)}</div>
+      <div style="width:24px;height:24px;border-radius:50%;border:2px solid ${sel?'var(--accent)':'var(--line2)'};background:${sel?'var(--accent)':'transparent'};display:flex;align-items:center;justify-content:center;font-size:14px;color:#1a1000" id="fav-check-${d.id}">${sel?'✓':''}</div>
+    </div>`;
+  }).join('');
+  openModal('favsModal');
+}
+function toggleFav(id,row){
+  if(S.favs.includes(id)){S.favs=S.favs.filter(f=>f!==id);}
+  else{if(S.favs.length>=5){showToast(L('maxFavs'));return;}S.favs.push(id);}
+  save();renderFavsRow();
+  const check=document.getElementById('fav-check-'+id);
+  if(check){const sel=S.favs.includes(id);check.style.border=`2px solid ${sel?'var(--accent)':'var(--line2)'}`;check.style.background=sel?'var(--accent)':'transparent';check.textContent=sel?'✓':'';}
+}
 
-  // Vol presets
-  const vp = document.getElementById('volPresets');
-  vp.innerHTML = VOL_PRESETS_ML.map(v =>
-    `<div class="vol-btn" onclick="selectVol(${v},this)">
-      <div class="vol-btn-val">${v}</div>
-      <div class="vol-btn-unit">мл</div>
-    </div>`
-  ).join('');
+// ====== QUICK ADD (favs + calendar) ======
+function openQuickAdd(drinkId,date){
+  S.qaDrinkId=drinkId;S.qaVol=null;S.qaUnit='мл';
+  const d=getDrink(drinkId);if(!d)return;
+  document.getElementById('quickAddTitle').textContent=getDrinkName(d);
+  document.getElementById('quickAddSub').textContent=d.abv+'% · '+(d.kcal||0)+' '+L('kcal')+'/100'+L('ml');
+  document.getElementById('qaDate').value=date||toDateStr(new Date());
+  document.getElementById('qaCustomVol').value='';
+  document.getElementById('qaConfirmBtn').disabled=true;
+  const vp=document.getElementById('qaVolPresets');
+  vp.innerHTML=VOL_PRESETS.map(v=>`<div class="vol-btn" onclick="selQaVol(${v},this)">
+    <div class="vol-btn-val">${v<1000?v:v/1000+'л'}</div>
+    <div class="vol-btn-unit">${v===200?'бокал':v===330?'0.33':v===500?'0.5л':'1 л'}</div>
+  </div>`).join('');
+  openModal('quickAddModal');
+}
+function selQaVol(v,el){S.qaVol=v;document.getElementById('qaCustomVol').value='';document.querySelectorAll('#qaVolPresets .vol-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');document.getElementById('qaConfirmBtn').disabled=false;}
+function onQaCustomVol(){const v=parseFloat(document.getElementById('qaCustomVol').value);S.qaVol=v>0?v:null;document.querySelectorAll('#qaVolPresets .vol-btn').forEach(b=>b.classList.remove('selected'));document.getElementById('qaConfirmBtn').disabled=!S.qaVol;}
+function setQaUnit(u,el){S.qaUnit=u;document.querySelectorAll('#quickAddModal .unit-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function confirmQuickAdd(){
+  if(!S.qaDrinkId||!S.qaVol)return;
+  const dateVal=document.getElementById('qaDate').value||toDateStr(new Date());
+  S.logs.push({ts:Date.now(),date:dateVal,drinkId:S.qaDrinkId,vol:S.qaVol,unit:S.qaUnit||'мл'});
+  save();closeModal('quickAddModal');renderHome();
+  if(S.calDay)renderCalendar();
+  showToast(L('logAdded'));
+}
 
+// ====== ADD MODAL ======
+function openAddModal(prefillDate){
+  S.selDrink=null;S.selVol=null;
+  if(!S.addCat)S.addCat=null;
+  S.addLevel=0;S.addGroup=null;S.addCat=null;
+  document.getElementById('customVol').value='';
+  const today=toDateStr(new Date());
+  document.getElementById('logDate').value=prefillDate||today;
+  document.getElementById('confirmBtn').disabled=true;
+  document.getElementById('addVolSection').style.display='none';
+  document.getElementById('addBreadcrumb').style.display='none';
+  renderAddStep();
   openModal('addModal');
 }
-
-function selectDrink(id, el) {
-  state.selectedDrink = id;
-  document.querySelectorAll('#modalDrinkGrid .drink-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  checkConfirm();
+function resetLogDate(){
+  const now=new Date();
+  document.getElementById('logDate').value=toDateStr(now);
 }
-
-function selectVol(vol, el) {
-  state.selectedVol = vol;
-  document.getElementById('customVol').value = '';
-  document.querySelectorAll('.vol-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
-  checkConfirm();
-}
-
-function onCustomVolInput() {
-  const v = parseInt(document.getElementById('customVol').value);
-  if (v > 0) {
-    state.selectedVol = v;
-    document.querySelectorAll('.vol-btn').forEach(b => b.classList.remove('selected'));
-  } else {
-    state.selectedVol = null;
+function renderAddStep(){
+  const title=document.getElementById('addModalTitle');
+  const sub=document.getElementById('addModalSub');
+  const step=document.getElementById('addStep');
+  const bc=document.getElementById('addBreadcrumb');
+  if(S.addLevel===0){
+    title.textContent=L('add');sub.textContent=S.lang==='de'?'Kategorie wählen':S.lang==='en'?'Choose category':'Выбери категорию';
+    bc.style.display='none';document.getElementById('addVolSection').style.display='none';
+    step.innerHTML=`<div class="level-grid">${getGroups().map(g=>`<div class="level-card" onclick="addSelectGroup('${g.id}')"><div class="level-card-arrow">›</div><div class="level-card-icon">${g.icon}</div><div class="level-card-name">${g.name}</div><div class="level-card-sub">${g.sub.length}</div></div>`).join('')}</div>`;
+  } else if(S.addLevel===1){
+    const grp=getGroups().find(g=>g.id===S.addGroup);
+    title.textContent=grp.name;sub.textContent=S.lang==='de'?'Typ wählen':S.lang==='en'?'Choose type':'Выбери тип';
+    bc.style.display='flex';bc.innerHTML=`<span class="breadcrumb-item" onclick="addBack2()">◀</span><span class="breadcrumb-sep">›</span><span>${grp.name}</span>`;
+    document.getElementById('addVolSection').style.display='none';
+    step.innerHTML=`<div class="subcat-list">${grp.sub.map(s=>{const cnt=S.drinks.filter(d=>d.cat===s.id).length;return`<div class="subcat-item" onclick="addSelectCat('${s.id}')"><div class="subcat-icon">${s.icon}</div><div class="subcat-info"><div class="subcat-name">${s.name}</div><div class="subcat-count">${cnt}</div></div><div class="subcat-arrow">›</div></div>`;}).join('')}</div>`;
+  } else if(S.addLevel===2){
+    const grp=getGroups().find(g=>g.id===S.addGroup);
+    const cat=getCats().find(c=>c.id===S.addCat);
+    const drinksFiltered=S.drinks.filter(d=>d.cat===S.addCat);
+    title.textContent=cat.name;sub.textContent=drinksFiltered.length?(S.lang==='de'?'Getränk wählen':S.lang==='en'?'Choose drink':'Выбери напиток'):(S.lang==='de'?'Keine Getränke':'No drinks'||'Нет напитков');
+    bc.style.display='flex';bc.innerHTML=`<span class="breadcrumb-item" onclick="addBack2()">◀</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-item" onclick="addBack()">${grp.name}</span><span class="breadcrumb-sep">›</span><span>${cat.name}</span>`;
+    step.innerHTML=`<div class="drink-sel-grid">${drinksFiltered.map(d=>`<div class="drink-sel-card ${S.selDrink===d.id?'selected':''}" onclick="addSelectDrink(${d.id})"><div class="drink-sel-icon">${d.icon}</div><div class="drink-sel-name">${getDrinkName(d)}</div><div class="drink-sel-meta">${d.abv}%${d.kcal?' · '+d.kcal+L('kcal'):''}</div></div>`).join('')}</div>`;
+    const vp=document.getElementById('volPresets');
+    vp.innerHTML=VOL_PRESETS.map(v=>`<div class="vol-btn ${S.selVol===v?'selected':''}" onclick="selVol(${v},this)">
+      <div class="vol-btn-val">${v<1000?v:v/1000+'л'}</div>
+      <div class="vol-btn-unit">${v===200?'бокал':v===330?'0.33':v===500?'0.5л':'1 л'}</div>
+    </div>`).join('');
+    document.getElementById('addVolSection').style.display='block';
   }
-  checkConfirm();
 }
+function addSelectGroup(gid){S.addGroup=gid;S.addLevel=1;renderAddStep();}
+function addSelectCat(cid){S.addCat=cid;S.addLevel=2;S.selDrink=null;renderAddStep();}
+function addBack(){S.addLevel=1;S.selDrink=null;S.selVol=null;document.getElementById('confirmBtn').disabled=true;renderAddStep();}
+function addBack2(){S.addLevel=0;S.selDrink=null;S.selVol=null;document.getElementById('confirmBtn').disabled=true;renderAddStep();}
+function addSelectDrink(id){S.selDrink=id;renderAddStep();checkConfirm();}
+function selVol(v,el){S.selVol=v;document.getElementById('customVol').value='';document.querySelectorAll('#volPresets .vol-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');checkConfirm();}
+function onCustomVol(){const v=parseFloat(document.getElementById('customVol').value);S.selVol=v>0?v:null;document.querySelectorAll('#volPresets .vol-btn').forEach(b=>b.classList.remove('selected'));checkConfirm();}
+function setUnit(u,el){S.unit=u;document.querySelectorAll('#addModal .unit-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function checkConfirm(){document.getElementById('confirmBtn').disabled=!(S.selDrink&&S.selVol);}
 
-function setUnit(u, el) {
-  state.unit = u;
-  document.querySelectorAll('.vol-unit-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function checkConfirm() {
-  document.getElementById('confirmBtn').disabled = !(state.selectedDrink && state.selectedVol);
-}
-
-function confirmLog() {
-  if (!state.selectedDrink || !state.selectedVol) return;
-  const now = new Date();
-  state.logs.push({
-    ts: now.getTime(),
-    date: toDateStr(now),
-    drinkId: state.selectedDrink,
-    vol: state.selectedVol,
-    unit: state.unit
-  });
-  save();
-  closeModal('addModal');
-  renderHome();
-  showToast('✓ Запись добавлена');
-}
-
-// ====== ADD DRINK MODAL ======
-function openAddDrinkModal() {
-  state.newDrinkEmoji = '🍺';
-  document.getElementById('newDrinkName').value = '';
-  document.getElementById('newDrinkAbv').value = '';
-  const eg = document.getElementById('emojiGrid');
-  eg.innerHTML = EMOJIS.map(e =>
-    `<div class="emoji-opt ${e === state.newDrinkEmoji ? 'selected' : ''}" onclick="selectEmoji('${e}',this)">${e}</div>`
-  ).join('');
-  openModal('addDrinkModal');
-}
-
-function selectEmoji(e, el) {
-  state.newDrinkEmoji = e;
-  document.querySelectorAll('.emoji-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-function confirmAddDrink() {
-  const name = document.getElementById('newDrinkName').value.trim();
-  const abv = parseFloat(document.getElementById('newDrinkAbv').value);
-  if (!name || isNaN(abv)) { showToast('Заполни название и крепость'); return; }
-  const newId = Date.now();
-  state.drinks.push({ id: newId, name, icon: state.newDrinkEmoji, abv });
-  save();
-  closeModal('addDrinkModal');
-  renderDrinks();
-  showToast('✓ Напиток добавлен');
-}
-
-// ====== DRINKS ======
-function renderDrinks() {
-  const list = document.getElementById('drinksList');
-  list.innerHTML = state.drinks.map(d =>
-    `<div class="drink-list-item">
-      <div class="drink-list-icon">${d.icon}</div>
-      <div class="drink-list-info">
-        <div class="drink-list-name">${d.name}</div>
-        <div class="drink-list-meta">${d.abv}% алкоголя</div>
-      </div>
-      <button class="drink-list-del" onclick="deleteDrink(${d.id})">✕</button>
-    </div>`
-  ).join('');
-}
-
-function deleteDrink(id) {
-  if (state.logs.some(l => l.drinkId === id)) {
-    showToast('⚠ Напиток есть в записях');
-    return;
-  }
-  state.drinks = state.drinks.filter(d => d.id !== id);
-  save(); renderDrinks();
-  showToast('Напиток удалён');
+function confirmLog(){
+  if(!S.selDrink||!S.selVol)return;
+  const dateVal=document.getElementById('logDate').value||toDateStr(new Date());
+  // Не позволяем вносить в будущее (больше 2 часов вперёд)
+  const maxDate=new Date();maxDate.setHours(maxDate.getHours()+2);
+  if(new Date(dateVal)>maxDate){showToast(L('noFuture'));return;}
+  S.logs.push({ts:Date.now(),date:dateVal,drinkId:S.selDrink,vol:S.selVol,unit:S.unit||'мл'});
+  save();closeModal('addModal');renderHome();showToast(L('logAdded'));
 }
 
 // ====== STATS ======
-function setStatTab(tab, el) {
-  state.statTab = tab;
-  document.querySelectorAll('.stats-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderStats();
+function setStatTab(tab,el){S.statTab=tab;document.querySelectorAll('.stats-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderStats();}
+
+function renderStats(){
+  const now=new Date();
+  let logs=S.logs,chartLabel='';
+  if(S.statTab==='week'){const d=new Date(now);d.setDate(d.getDate()-7);logs=S.logs.filter(l=>new Date(l.ts)>=d);chartLabel=L('week');}
+  else if(S.statTab==='month'){const d=new Date(now);d.setDate(d.getDate()-30);logs=S.logs.filter(l=>new Date(l.ts)>=d);chartLabel=L('month');}
+  else if(S.statTab==='year'){const d=new Date(now);d.setFullYear(d.getFullYear()-1);logs=S.logs.filter(l=>new Date(l.ts)>=d);chartLabel=L('year');}
+  else{chartLabel=L('all');}
+
+  const tvol=logs.reduce((a,l)=>a+toMl(l),0);
+  const talc=logs.reduce((a,l)=>{const d=getDrink(l.drinkId);return a+(d?toMl(l)*d.abv/100*.789:0);},0);
+  const tkcal=logs.reduce((a,l)=>{const d=getDrink(l.drinkId);return a+(d?toMl(l)*(d.kcal||0)/100:0);},0);
+  const alcLogs=logs.filter(l=>{const d=getDrink(l.drinkId);return d&&d.abv>0.5;});
+  const alcDays={};alcLogs.forEach(l=>{alcDays[l.date]=true;});
+  const daysAlc=Object.keys(alcDays).length;
+  const allLogDays={};logs.forEach(l=>{allLogDays[l.date]=true;});
+  const totalLogged=Object.keys(allLogDays).length;
+  const daysNoAlc=Math.max(0,totalLogged-daysAlc);
+  const avgAlc=totalLogged>0?(talc/totalLogged):0;
+
+  // Chart data
+  let chartDays=[];
+  if(S.statTab==='week'||S.statTab==='all'){
+    for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);const ds=toDateStr(d);
+      const dayLogs=logs.filter(l=>l.date===ds);
+      const alcG=dayLogs.reduce((a,l)=>{const dr=getDrink(l.drinkId);return a+(dr?toMl(l)*dr.abv/100*.789:0);},0);
+      const hasDrink=dayLogs.length>0;
+      chartDays.push({l:['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()],v:alcG,t:i===0,empty:!hasDrink});}
+  } else if(S.statTab==='month'){
+    for(let i=7;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i*7);const weekEnd=new Date(d);const weekStart=new Date(d);weekStart.setDate(weekStart.getDate()-6);
+      const wl=logs.filter(l=>{const ld=new Date(l.ts);return ld>=weekStart&&ld<=weekEnd;});
+      const alcG=wl.reduce((a,l)=>{const dr=getDrink(l.drinkId);return a+(dr?toMl(l)*dr.abv/100*.789:0);},0);
+      chartDays.push({l:'W'+(8-i),v:alcG,t:i===0,empty:wl.length===0});}
+  } else if(S.statTab==='year'){
+    for(let i=11;i>=0;i--){const d=new Date(now);d.setMonth(d.getMonth()-i);const m=d.getMonth(),y=d.getFullYear();
+      const ml2=logs.filter(l=>{const ld=new Date(l.ts);return ld.getMonth()===m&&ld.getFullYear()===y;});
+      const alcG=ml2.reduce((a,l)=>{const dr=getDrink(l.drinkId);return a+(dr?toMl(l)*dr.abv/100*.789:0);},0);
+      chartDays.push({l:['Я','Ф','М','А','М','И','И','А','С','О','Н','Д'][d.getMonth()],v:alcG,t:i===0,empty:ml2.length===0});}
+  }
+
+  const mx=Math.max(...chartDays.map(d=>d.v),VOZ_LIMIT+5);
+  const vozPct=Math.min(95,(VOZ_LIMIT/mx)*90);
+
+  const dc={};logs.forEach(l=>{dc[l.drinkId]=(dc[l.drinkId]||0)+1;});
+  const top=Object.entries(dc).sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+  document.getElementById('statsContent').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="stat-card"><div class="stat-card-title">${L('ml')}</div><div class="stat-val">${Math.round(tvol)}</div></div>
+      <div class="stat-card"><div class="stat-card-title">${L('kcal')}</div><div class="stat-val">${Math.round(tkcal)}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="stat-card"><div class="stat-card-title">${L('alc')}</div><div class="stat-val">${talc.toFixed(0)}</div></div>
+      <div class="stat-card"><div class="stat-card-title">${L('avgPerDay')}</div><div class="stat-val" style="font-size:22px">${avgAlc.toFixed(1)}${L('g')}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="stat-card"><div class="stat-card-title">${L('soberDays')} 🎉</div><div class="stat-val" style="color:var(--green)">${daysNoAlc}</div></div>
+      <div class="stat-card"><div class="stat-card-title">${L('withAlc')}</div><div class="stat-val">${daysAlc}</div></div>
+    </div>
+    <div class="stat-card" style="margin-bottom:10px">
+      <div class="stat-card-title">${chartLabel} (${L('g')} ${L('alc')})</div>
+      <div class="chart-toggle">
+        <button class="chart-btn ${S.chartType==='bar'?'active':''}" onclick="setChartType('bar',this)">📊</button>
+        <button class="chart-btn ${S.chartType==='line'?'active':''}" onclick="setChartType('line',this)">📈</button>
+      </div>
+      ${S.chartType==='bar'?renderBarChart(chartDays,mx):renderLineChart(chartDays,mx)}
+      <!-- Легенда под графиком -->
+      <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:12px;height:12px;border-radius:2px;background:var(--green)"></div><span style="font-size:11px;color:var(--muted)">≤${VOZ_LIMIT}${L('g')} — ${L('who')}</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:12px;height:12px;border-radius:2px;background:var(--yellow)"></div><span style="font-size:11px;color:var(--muted)">≤${VOZ_LIMIT*1.5}${L('g')}</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:12px;height:12px;border-radius:2px;background:var(--red)"></div><span style="font-size:11px;color:var(--muted)">&gt;${VOZ_LIMIT*1.5}${L('g')}</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:12px;height:4px;border-radius:2px;background:var(--green);opacity:.4"></div><span style="font-size:11px;color:var(--muted)">${L('soberDay')}</span></div>
+      </div>
+    </div>
+    ${top.length?`<div class="stat-card" style="margin-bottom:10px"><div class="stat-card-title">${L('top')}</div>${top.map(([id,cnt])=>{const d=getDrink(parseInt(id));return d?`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)"><span style="font-size:20px">${d.icon}</span><span style="flex:1;font-size:14px;font-weight:600">${getDrinkName(d)}</span><span style="font-size:13px;color:var(--accent);font-family:'DM Mono',monospace">${cnt}×</span></div>`:'';}).join('')}</div>`:''}
+  `;
+
+  // All time
+  renderAllTime();
 }
 
-function renderStats() {
-  const now = new Date();
-  let logs = state.logs;
-  if (state.statTab === 'week') {
-    const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7);
-    logs = logs.filter(l => new Date(l.ts) >= weekAgo);
-  } else if (state.statTab === 'month') {
-    const monthAgo = new Date(now); monthAgo.setDate(monthAgo.getDate() - 30);
-    logs = logs.filter(l => new Date(l.ts) >= monthAgo);
-  }
+function renderBarChart(days,mx){
+  return`<div class="bar-chart">${days.map(d=>{
+    const pct=mx>0?(d.v/mx)*85:0;
+    const color=d.v===0?'':d.v<=VOZ_LIMIT?'green':d.v<=VOZ_LIMIT*1.5?'yellow':'red';
+    return`<div class="bar-wrap">
+      <div class="bar-val">${d.v>0?d.v.toFixed(1):''}</div>
+      <div class="bar ${color} ${d.v===0&&!d.empty?'':''}" style="height:${Math.max(d.v>0?4:2,pct)}px${d.v===0?';opacity:.15;background:var(--muted2)':''}"></div>
+      <div class="bar-lbl">${d.l}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
 
-  const totalVol = logs.reduce((a, l) => a + l.vol, 0);
-  const totalAlc = logs.reduce((a, l) => {
-    const d = state.drinks.find(d => d.id === l.drinkId);
-    return a + (d ? l.vol * d.abv / 100 * 0.789 : 0);
-  }, 0);
+function renderLineChart(days,mx){
+  const w=300,h=85,pad=4;
+  if(!days.length)return'<div style="height:85px"></div>';
+  const pts=days.map((d,i)=>({x:pad+i*(w-pad*2)/(days.length-1||1),y:h-pad-(d.v/mx)*(h-pad*2)}));
+  const path='M'+pts.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join('L');
+  const vozY=(h-pad-(VOZ_LIMIT/mx)*(h-pad*2)).toFixed(1);
+  return`<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:85px;display:block">
+    <line x1="${pad}" y1="${vozY}" x2="${w-pad}" y2="${vozY}" stroke="var(--red)" stroke-width="1" stroke-dasharray="4,3" opacity=".6"/>
+    <path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>
+    ${pts.map((p,i)=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="${days[i].v===0?'var(--green)':days[i].v<=VOZ_LIMIT?'var(--accent)':days[i].v<=VOZ_LIMIT*1.5?'var(--yellow)':'var(--red)'}"/>
+    <text x="${p.x.toFixed(1)}" y="${(p.y-6).toFixed(1)}" text-anchor="middle" font-size="7" fill="var(--muted)" font-family="DM Mono">${days[i].v>0?days[i].v.toFixed(0):''}</text>`).join('')}
+    ${days.map((d,i)=>`<text x="${pts[i].x.toFixed(1)}" y="${h}" text-anchor="middle" font-size="8" fill="var(--muted2)" font-family="DM Mono">${d.l}</text>`).join('')}
+  </svg>`;
+}
 
-  // Days with data
-  const dayMap = {};
-  logs.forEach(l => { dayMap[l.date] = (dayMap[l.date] || 0) + l.vol; });
-  const daysWithDrink = Object.keys(dayMap).length;
+function setChartType(type,el){S.chartType=type;renderStats();}
 
-  // Bar chart — last 7 days
-  const days7 = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(now); d.setDate(d.getDate() - i);
-    const ds = toDateStr(d);
-    days7.push({ label: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()], vol: dayMap[ds] || 0, isToday: i === 0 });
-  }
-  const maxVol = Math.max(...days7.map(d => d.vol), 1);
-
-  // Top drinks
-  const drinkCount = {};
-  logs.forEach(l => { drinkCount[l.drinkId] = (drinkCount[l.drinkId] || 0) + 1; });
-  const topDrinks = Object.entries(drinkCount).sort((a,b) => b[1]-a[1]).slice(0,3);
-
-  const el = document.getElementById('statsContent');
-  el.innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div class="stat-card">
-        <div class="stat-card-title">Всего мл</div>
-        <div class="stat-card-val">${totalVol}</div>
-        <div class="stat-card-sub">за период</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-title">Алкоголь (г)</div>
-        <div class="stat-card-val">${totalAlc.toFixed(0)}</div>
-        <div class="stat-card-sub">чистого</div>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div class="stat-card">
-        <div class="stat-card-title">Дней с выпивкой</div>
-        <div class="stat-card-val">${daysWithDrink}</div>
-        <div class="stat-card-sub">дней</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-title">Записей</div>
-        <div class="stat-card-val">${logs.length}</div>
-        <div class="stat-card-sub">всего</div>
-      </div>
-    </div>
-    <div class="stat-card" style="margin-bottom:12px">
-      <div class="stat-card-title">Активность (7 дней, мл)</div>
-      <div class="bar-chart">
-        ${days7.map(d => `
-          <div class="bar-wrap">
-            <div class="bar ${d.isToday ? 'today' : ''}" style="height:${Math.max(3, (d.vol/maxVol)*70)}px"></div>
-            <div class="bar-label">${d.label}</div>
-          </div>`).join('')}
-      </div>
-    </div>
-    ${topDrinks.length ? `
-    <div class="stat-card">
-      <div class="stat-card-title">Топ напитки</div>
-      ${topDrinks.map(([id, cnt]) => {
-        const d = state.drinks.find(d => d.id == id);
-        return d ? `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)">
-          <span style="font-size:20px">${d.icon}</span>
-          <span style="flex:1;font-size:14px;font-weight:600">${d.name}</span>
-          <span style="font-size:13px;color:var(--accent);font-family:'DM Mono',monospace">${cnt}×</span>
-        </div>` : '';
-      }).join('')}
-    </div>` : ''}
+function renderAllTime(){
+  const all=S.logs;
+  const talcAll=all.reduce((a,l)=>{const d=getDrink(l.drinkId);return a+(d?toMl(l)*d.abv/100*.789:0);},0);
+  const tkcalAll=all.reduce((a,l)=>{const d=getDrink(l.drinkId);return a+(d?toMl(l)*(d.kcal||0)/100:0);},0);
+  const alcDaysAll={};all.filter(l=>{const d=getDrink(l.drinkId);return d&&d.abv>0.5;}).forEach(l=>{alcDaysAll[l.date]=true;});
+  const loggedDaysAll={};all.forEach(l=>{loggedDaysAll[l.date]=true;});
+  const totalLoggedAll=Object.keys(loggedDaysAll).length;
+  const soberAll=Math.max(0,totalLoggedAll-Object.keys(alcDaysAll).length);
+  const avgAll=totalLoggedAll>0?(talcAll/totalLoggedAll):0;
+  document.getElementById('alltimeCard').innerHTML=`
+    <div class="alltime-title">${L('allTime')}</div>
+    <div class="alltime-row"><span class="alltime-label">${L('avgPerDay')}</span><span class="alltime-val">${avgAll.toFixed(1)} ${L('g')}</span></div>
+    <div class="alltime-row"><span class="alltime-label">${L('totalKcal')}</span><span class="alltime-val">${Math.round(tkcalAll).toLocaleString()} ${L('kcal')}</span></div>
+    <div class="alltime-row"><span class="alltime-label">${L('loggedDays')}</span><span class="alltime-val">${totalLoggedAll}</span></div>
+    <div class="alltime-row"><span class="alltime-label">${L('soberDays')}</span><span class="alltime-val" style="color:var(--green)">${soberAll}</span></div>
   `;
 }
 
-// ====== SETTINGS ======
-function exportData() {
-  const data = { drinks: state.drinks, logs: state.logs, exportedAt: new Date().toISOString() };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'lifelog_backup_' + toDateStr(new Date()) + '.json';
-  a.click();
-  showToast('✓ Данные экспортированы');
+// ====== CALENDAR ======
+function renderCalendar(){
+  const MN_RU=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  const MN_DE=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  const MN_EN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MN=S.lang==='de'?MN_DE:S.lang==='en'?MN_EN:MN_RU;
+  document.getElementById('calTitle').textContent=MN[S.calMonth]+' '+S.calYear;
+  const now=new Date(),td=toDateStr(now);
+  const DN_RU=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const DN_DE=['Mo','Di','Mi','Do','Fr','Sa','So'];
+  const DN_EN=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const DN=S.lang==='de'?DN_DE:S.lang==='en'?DN_EN:DN_RU;
+  const logDays={};const soberLogDays={};
+  S.logs.forEach(l=>{const d=new Date(l.ts);if(d.getFullYear()===S.calYear&&d.getMonth()===S.calMonth){logDays[l.date]=true;}});
+  // Check sober days (logged but no alc)
+  Object.keys(logDays).forEach(ds=>{
+    const dayLogs=S.logs.filter(l=>l.date===ds);
+    const hasAlc=dayLogs.some(l=>{const d=getDrink(l.drinkId);return d&&d.abv>0.5;});
+    if(!hasAlc)soberLogDays[ds]=true;
+  });
+  let h=DN.map(d=>`<div class="cal-dn">${d}</div>`).join('');
+  const first=new Date(S.calYear,S.calMonth,1),dow=(first.getDay()+6)%7;
+  const dim=new Date(S.calYear,S.calMonth+1,0).getDate(),prev=new Date(S.calYear,S.calMonth,0).getDate();
+  for(let i=0;i<dow;i++)h+=`<div class="cal-d other">${prev-dow+i+1}</div>`;
+  for(let d=1;d<=dim;d++){
+    const ds=S.calYear+'-'+String(S.calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    let cls='cal-d';
+    if(ds===td)cls+=' today';
+    if(logDays[ds])cls+=' has-log';
+    if(soberLogDays[ds])cls+=' sober';
+    if(ds===S.calDay)cls+=' sel';
+    h+=`<div class="${cls}" onclick="calSel('${ds}')">${d}</div>`;
+  }
+  document.getElementById('calGrid').innerHTML=h;
+  renderCalDetail();
+}
+function calSel(ds){S.calDay=S.calDay===ds?null:ds;renderCalendar();}
+function calPrev(){S.calMonth--;if(S.calMonth<0){S.calMonth=11;S.calYear--;}renderCalendar();}
+function calNext(){S.calMonth++;if(S.calMonth>11){S.calMonth=0;S.calYear++;}renderCalendar();}
+
+function openYearPicker(){
+  document.querySelector('#yearModal .modal-title').textContent=L('yearChoose');
+  const now=new Date();
+  const grid=document.getElementById('yearGrid');
+  const years=[];for(let y=now.getFullYear();y>=now.getFullYear()-10;y--)years.push(y);
+  grid.innerHTML=years.map(y=>`<div class="year-btn ${y===S.calYear?'active':''}" onclick="selectYear(${y})">${y}</div>`).join('');
+  openModal('yearModal');
+}
+function selectYear(y){S.calYear=y;closeModal('yearModal');renderCalendar();}
+
+function renderCalDetail(){
+  const el=document.getElementById('calDetail');
+  if(!S.calDay){el.innerHTML='';return;}
+  const dl=S.logs.filter(l=>l.date===S.calDay).sort((a,b)=>a.ts-b.ts);
+  // Add button for this day
+  const addBtn=`<button onclick="openQuickAddFromCal('${S.calDay}')" style="width:100%;background:var(--accent);color:#1a1000;border:none;border-radius:var(--r2);padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:10px">＋ ${L('add')}</button>`;
+  if(!dl.length){el.innerHTML=addBtn+`<div class="cal-detail"><div class="cal-detail-title">${S.calDay}</div><div style="color:var(--green);font-size:14px">🎉 ${L('soberDay')}</div></div>`;return;}
+  const tvol=dl.reduce((a,l)=>a+toMl(l),0);
+  const talc=dl.reduce((a,l)=>{const d=getDrink(l.drinkId);return a+(d?toMl(l)*d.abv/100*.789:0);},0);
+  const tkcal=dl.reduce((a,l)=>{const d=getDrink(l.drinkId);return a+(d?toMl(l)*(d.kcal||0)/100:0);},0);
+  const alcColor=talc<=VOZ_LIMIT?'var(--green)':talc<=VOZ_LIMIT*1.5?'var(--yellow)':'var(--red)';
+  el.innerHTML=addBtn+`<div class="cal-detail">
+    <div class="cal-detail-title">${S.calDay}</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+      <div style="text-align:center"><div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)">${Math.round(tvol)}</div><div style="font-size:10px;color:var(--muted)">${L('ml')}</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:${alcColor}">${talc.toFixed(1)}</div><div style="font-size:10px;color:var(--muted)">${L('alc')}</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--accent)">${Math.round(tkcal)}</div><div style="font-size:10px;color:var(--muted)">${L('kcal')}</div></div>
+    </div>
+    ${dl.map(log=>{const d=getDrink(log.drinkId);if(!d)return'';const ml=toMl(log),t=new Date(log.ts).toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'});
+      return`<div class="cal-item"><span style="font-size:20px">${d.icon}</span><div style="flex:1"><div style="font-size:14px;font-weight:600">${getDrinkName(d)}</div><div style="font-size:11px;color:var(--muted)">${log.vol}${log.unit||'мл'} · ${d.abv}%${d.kcal?' · '+Math.round(ml*d.kcal/100)+L('kcal'):''}</div></div><div style="font-size:12px;color:var(--muted2)">${t}</div></div>`;
+    }).join('')}
+  </div>`;
 }
 
-function importData() { document.getElementById('importFile').click(); }
+function openQuickAddFromCal(date){
+  // Show drink selector first - open full add modal with prefilled date
+  openAddModal(date);
+  closeModal('quickAddModal');
+}
 
-function handleImport(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const data = JSON.parse(ev.target.result);
-      if (data.drinks) state.drinks = data.drinks;
-      if (data.logs) state.logs = data.logs;
-      save(); renderHome();
-      showToast('✓ Данные импортированы');
-    } catch { showToast('⚠ Ошибка импорта'); }
+// ====== DRINKS ======
+function renderDrinks(){
+  const el=document.getElementById('drinksContent');
+  const title=document.getElementById('drinksTitle');
+  const sub=document.getElementById('drinksSub');
+  const back=document.getElementById('topbarBack');
+  if(S.drinksLevel===0){
+    title.textContent=S.lang==='de'?'Getränkedatenbank':S.lang==='en'?'Drink database':L('drinks')+' – База';
+    sub.textContent=L('catChoose');
+    back.classList.remove('visible');
+    el.innerHTML=getGroups().map(g=>{const cnt=S.drinks.filter(d=>g.sub.some(s=>s.id===d.cat)).length;return`<div class="cat-card" onclick="drinkGoGroup('${g.id}')"><div class="cat-card-icon">${g.icon}</div><div class="cat-card-info"><div class="cat-card-name">${g.name}</div><div class="cat-card-sub">${cnt}</div></div><div class="cat-card-arrow">›</div></div>`;}).join('')
+      +`<button class="add-drink-btn" onclick="openDrinkModal(null)">＋ ${L('addDrink')}</button>`;
+  } else if(S.drinksLevel===1){
+    const grp=getGroups().find(g=>g.id===S.drinksGroup);
+    title.textContent=grp.name;sub.textContent=L('typeChoose');back.classList.add('visible');
+    document.getElementById('backLabel').textContent=L('drinks');
+    el.innerHTML=grp.sub.map(s=>{const cnt=S.drinks.filter(d=>d.cat===s.id).length;return`<div class="cat-card" onclick="drinkGoCat('${s.id}')"><div class="cat-card-icon">${s.icon}</div><div class="cat-card-info"><div class="cat-card-name">${s.name}</div><div class="cat-card-sub">${cnt}</div></div><div class="cat-card-arrow">›</div></div>`;}).join('')
+      +`<button class="add-drink-btn" onclick="openDrinkModal(null)">＋</button>`;
+  } else if(S.drinksLevel===2){
+    const grp=getGroups().find(g=>g.id===S.drinksGroup);
+    const cat=getCats().find(c=>c.id===S.drinksCat);
+    const drinksInCat=S.drinks.filter(d=>d.cat===S.drinksCat);
+    title.textContent=cat.name;sub.textContent=grp.name;back.classList.add('visible');
+    document.getElementById('backLabel').textContent=grp.name;
+    const dHtml=drinksInCat.map(d=>{
+      const def=DEFAULT_DRINKS.find(dd=>dd.id===d.id);
+      const hasChanged=def&&JSON.stringify({abv:d.abv,kcal:d.kcal,carbs:d.carbs,sugar:d.sugar,protein:d.protein,fat:d.fat,fatSat:d.fatSat})!==JSON.stringify({abv:def.abv,kcal:def.kcal,carbs:def.carbs,sugar:def.sugar,protein:def.protein,fat:def.fat,fatSat:def.fatSat});
+      return`<div class="drink-db-item">
+        <div class="drink-db-top">
+          <div class="drink-db-icon">${d.icon}</div>
+          <div class="drink-db-name">${getDrinkName(d)}</div>
+          <div class="drink-db-actions">
+            ${hasChanged&&def?`<button class="db-btn db-restore" onclick="restoreDrink(${d.id})" title="${L('resetOne')}">↺</button>`:''}
+            <button class="db-btn db-edit" onclick="openDrinkModal(${d.id})">✏️</button>
+            <button class="db-btn db-del" onclick="delDrinkConfirm(${d.id})">✕</button>
+          </div>
+        </div>
+        <div class="drink-db-nutrition">
+          <div class="nutr-cell"><div class="nutr-val">${d.abv}%</div><div class="nutr-label">alc.</div></div>
+          <div class="nutr-cell"><div class="nutr-val">${d.kcal||0}</div><div class="nutr-label">kcal</div></div>
+          <div class="nutr-cell"><div class="nutr-val">${d.carbs||0}g</div><div class="nutr-label">carbs</div></div>
+          <div class="nutr-cell"><div class="nutr-val">${d.protein||0}g</div><div class="nutr-label">prot.</div></div>
+        </div>
+        ${(d.sugar||d.fat||d.fatSat)?`<div style="display:flex;gap:6px;margin-top:6px">
+          ${d.sugar?`<div style="flex:1;background:var(--bg3);border-radius:8px;padding:6px;text-align:center"><div style="font-size:11px;font-weight:700;color:var(--muted)">${d.sugar}g</div><div style="font-size:8px;color:var(--muted2)">sugar</div></div>`:''}
+          ${d.fat?`<div style="flex:1;background:var(--bg3);border-radius:8px;padding:6px;text-align:center"><div style="font-size:11px;font-weight:700;color:var(--muted)">${d.fat}g</div><div style="font-size:8px;color:var(--muted2)">fat</div></div>`:''}
+          ${d.fatSat?`<div style="flex:1;background:var(--bg3);border-radius:8px;padding:6px;text-align:center"><div style="font-size:11px;font-weight:700;color:var(--muted)">${d.fatSat}g</div><div style="font-size:8px;color:var(--muted2)">sat.</div></div>`:''}
+        </div>`:''}
+      </div>`;
+    }).join('');
+    el.innerHTML=(drinksInCat.length?dHtml:`<div class="empty"><div class="empty-icon">🫗</div><div class="empty-text">${L('noDrinks')}</div></div>`)
+      +`<button class="add-drink-btn" onclick="openDrinkModal(null)">＋ ${L('addDrink')}</button>`;
+  }
+}
+function drinkGoGroup(gid){S.drinksGroup=gid;S.drinksLevel=1;renderDrinks();document.getElementById('content').scrollTop=0;}
+function drinkGoCat(cid){S.drinksCat=cid;S.drinksLevel=2;renderDrinks();document.getElementById('content').scrollTop=0;}
+
+function delDrinkConfirm(id){
+  const d=getDrink(id);if(!d)return;
+  if(S.logs.some(l=>l.drinkId===id)){showToast(L('cantDelete'));return;}
+  showConfirm(L('confirmDelDrink'),d.name,()=>{S.drinks=S.drinks.filter(dd=>dd.id!==id);save();renderDrinks();showToast(L('drinkRemoved'));});
+}
+
+function restoreDrink(id){
+  const def=DEFAULT_DRINKS.find(d=>d.id===id);if(!def)return;
+  const d=S.drinks.find(dd=>dd.id===id);if(!d)return;
+  Object.assign(d,{abv:def.abv,kcal:def.kcal,carbs:def.carbs,sugar:def.sugar,protein:def.protein,fat:def.fat,fatSat:def.fatSat});
+  save();renderDrinks();showToast('↺ '+L('saved'));
+}
+
+function openDrinkModal(editId){
+  S.editDrinkId=editId;
+  const e=editId?S.drinks.find(d=>d.id===editId):null;
+  S.selEmoji=e?e.icon:'🍺';
+  document.getElementById('drinkModalTitle').textContent=e?L('editDrink'):L('newDrink');
+  document.getElementById('lbl-cat').textContent=L('catLabel');
+  document.getElementById('lbl-dname').textContent=L('nameLabel');
+  document.getElementById('lbl-icon').textContent=L('iconLabel');
+  document.getElementById('lbl-save').textContent=L('saveLabel');
+  const sel=document.getElementById('drinkCat');
+  sel.innerHTML=getCats().map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  if(e&&e.cat)sel.value=e.cat;else if(S.drinksCat)sel.value=S.drinksCat;
+  document.getElementById('dName').value=e?e.name:'';
+  document.getElementById('dAbv').value=e?e.abv:'';
+  document.getElementById('dKcal').value=e?e.kcal:'';
+  document.getElementById('dCarbs').value=e?e.carbs:'';
+  document.getElementById('dSugar').value=e?e.sugar:'';
+  document.getElementById('dProtein').value=e?e.protein:'';
+  document.getElementById('dFat').value=e?e.fat:'';
+  document.getElementById('dFatSat').value=e?e.fatSat:'';
+  document.getElementById('emojiGrid').innerHTML=EMOJIS.map(em=>`<div class="emoji-opt ${em===S.selEmoji?'sel':''}" onclick="selEmoji('${em}',this)">${em}</div>`).join('');
+  openModal('drinkModal');
+}
+function selEmoji(e,el){S.selEmoji=e;document.querySelectorAll('.emoji-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
+function confirmDrink(){
+  const name=document.getElementById('dName').value.trim();
+  if(!name){showToast(L('enterName'));return;}
+  const obj={name,icon:S.selEmoji,cat:document.getElementById('drinkCat').value,
+    abv:parseFloat(document.getElementById('dAbv').value)||0,
+    kcal:parseFloat(document.getElementById('dKcal').value)||0,
+    carbs:parseFloat(document.getElementById('dCarbs').value)||0,
+    sugar:parseFloat(document.getElementById('dSugar').value)||0,
+    protein:parseFloat(document.getElementById('dProtein').value)||0,
+    fat:parseFloat(document.getElementById('dFat').value)||0,
+    fatSat:parseFloat(document.getElementById('dFatSat').value)||0,
   };
-  reader.readAsText(file);
-  e.target.value = '';
+  if(S.editDrinkId){Object.assign(S.drinks.find(d=>d.id===S.editDrinkId)||{},obj);}
+  else{S.drinks.push({id:Date.now(),...obj});}
+  save();closeModal('drinkModal');renderDrinks();showToast(L('saved'));
 }
 
-function clearLogs() {
-  if (!confirm('Удалить все записи? База напитков сохранится.')) return;
-  state.logs = [];
-  save(); renderHome();
-  showToast('Записи удалены');
+// ====== SETTINGS ======
+function resetDrinks(){
+  showConfirm(L('resetDb'),L('resetDbSub'),()=>{
+    S.drinks=JSON.parse(JSON.stringify(DEFAULT_DRINKS));save();renderDrinks();showToast(L('dbReset'));
+  });
 }
+function clearLogs(){
+  showConfirm(L('clearLabel'),L('clearSub'),()=>{S.logs=[];save();renderHome();showToast('✓');});
+}
+function exportData(){const b=new Blob([JSON.stringify({drinks:S.drinks,logs:S.logs,favs:S.favs,v:4},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='lifelog_'+toDateStr(new Date())+'.json';a.click();showToast(L('exported'));}
+function importData(){document.getElementById('importFile').click();}
+function handleImport(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const data=JSON.parse(ev.target.result);if(data.drinks)S.drinks=data.drinks;if(data.logs)S.logs=data.logs;if(data.favs)S.favs=data.favs;save();renderHome();showToast(L('imported'));}catch{showToast('⚠ Error');}};r.readAsText(f);e.target.value='';}
+
+// ====== CONFIRM DIALOG ======
+function showConfirm(title,msg,cb){
+  S.confirmCb=cb;
+  document.getElementById('confirmTitle').textContent=title;
+  document.getElementById('confirmMsg').textContent=msg;
+  document.getElementById('confirmYesBtn').textContent=S.lang==='de'?'Löschen':S.lang==='en'?'Delete':'Удалить';
+  document.getElementById('confirmYesBtn').onclick=()=>{closeConfirm();if(S.confirmCb)S.confirmCb();};
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm(){document.getElementById('confirmOverlay').classList.remove('open');}
 
 // ====== UTILS ======
-function toDateStr(d) {
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-
-function openModal(id) {
-  document.getElementById(id).classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-  document.body.style.overflow = '';
-}
-function handleOverlayClick(e, id) {
-  if (e.target === document.getElementById(id)) closeModal(id);
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
+function toMl(log){if(log.unit==='л')return log.vol*1000;if(log.unit==='сл')return log.vol*10;return log.vol;}
+function getDrink(id){return S.drinks.find(d=>d.id===id);}
+function toDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function openModal(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
+function handleOverlay(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
 // ====== INIT ======
 load();
+applyLang();
 renderHome();
 </script>
 </body>
